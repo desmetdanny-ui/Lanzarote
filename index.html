@@ -555,6 +555,7 @@ textarea.notitie::placeholder { color: #BDB5AC; }
     <button class="tab"     onclick="go('fase2',this)">Fase 2</button>
     <button class="tab"     onclick="go('fase3',this)">Fase 3</button>
     <button class="tab"     onclick="go('verslag',this)">📖 Verslag</button>
+    <button class="tab"     onclick="go('bud',this)">💰 Budget</button>
   </div>
 </div>
 
@@ -987,6 +988,123 @@ textarea.notitie::placeholder { color: #BDB5AC; }
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════ BUDGET -->
+<div id="p-bud" class="page">
+
+  <div class="hero" style="background:linear-gradient(135deg,#2A7A3A 0%,#1A5228 100%)">
+    <div class="hero-eye">Kostenoverzicht</div>
+    <h2>💰 Budget Lanzarote 2027</h2>
+    <p>Vul jullie werkelijke kosten in tijdens de reis — het totaal wordt automatisch berekend.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Totaal overzicht</div><div class="card-hdr-datum">Automatisch berekend</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd" style="color:var(--muted)">Vast</div>
+        <div class="tb-wat"><strong style="font-size:.88rem">Vluchten + hotel (All Inclusive)</strong></div>
+        <div style="font-size:1rem;font-weight:700;color:var(--sea);min-width:80px;text-align:right" id="tot-vast">€ —</div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd" style="color:var(--muted)">Ter plaatse</div>
+        <div class="tb-wat"><strong style="font-size:.88rem">Huurwagen + uitstappen + eten buiten hotel + shopping + diversen</strong></div>
+        <div style="font-size:1rem;font-weight:700;color:var(--sea);min-width:80px;text-align:right" id="tot-ter">€ —</div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sea);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--sea)">TOTAAL REIS</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600" id="tot-alles">€ —</div>
+      </div>
+      <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:.78rem;color:var(--muted)">Per persoon</div>
+        <div style="font-size:1rem;font-weight:600;color:var(--muted)" id="tot-pp">€ —</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr" style="background:#1A5228"><div class="card-hdr-titel">Vaste kosten — al geboekt</div><div class="card-hdr-datum">Gekende bedragen</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>SN3787 + SN3788 — Brussel ↔ Lanzarote</strong>
+          <p>2 personen retour</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-vluchten" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>H10 Rubicón Horizons Collection — 10 nachten</strong>
+          <p>Privilege All Inclusive, 2 personen</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-hotel" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr" style="background:#1A5228"><div class="card-hdr-titel">Ter plaatse</div><div class="card-hdr-datum">Vul aan tijdens de reis</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>Huurwagen</strong>
+          <p>Volledige huurperiode</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-auto" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>Uitstappen &amp; tickets</strong>
+          <p>Timanfaya, Jameos, Mirador del Río, ...</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-uitstap" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>Eten &amp; drinken buiten het hotel</strong>
+          <p>Restaurants, terrasjes</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-eten" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>Shopping</strong>
+          <p>Souvenirs, wijn uit La Geria, ...</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-shop" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-wat">
+          <strong>Diversen</strong>
+          <p>Parking, fooien, kleine uitgaven</p>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <span style="font-size:.78rem;color:var(--muted)">€</span>
+            <input type="number" id="b-div" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1037,6 +1155,11 @@ onSnapshot(guideDocRef, (snap) => {
     const el = document.getElementById('n-'+d.id);
     if(el && guideData[d.id] !== undefined) el.value = guideData[d.id];
   });
+  BUDGET_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if(el && guideData[id] !== undefined) el.value = guideData[id];
+  });
+  herbereken();
 }, (err) => console.error('sync error', err));
 
 function laad() { /* wordt nu via onSnapshot hierboven live gedaan */ }
@@ -1097,6 +1220,20 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('zicht'), 2600);
 }
 
+const BUDGET_IDS = ['b-vluchten','b-hotel','b-auto','b-uitstap','b-eten','b-shop','b-div'];
+
+function herbereken(){
+  const g = id => parseFloat(document.getElementById(id)?.value) || 0;
+  const vast = g('b-vluchten') + g('b-hotel');
+  const ter = g('b-auto') + g('b-uitstap') + g('b-eten') + g('b-shop') + g('b-div');
+  const totaal = vast + ter;
+  const fmt = n => n > 0 ? '€ ' + n.toFixed(0) : '€ —';
+  document.getElementById('tot-vast').textContent = fmt(vast);
+  document.getElementById('tot-ter').textContent = fmt(ter);
+  document.getElementById('tot-alles').textContent = fmt(totaal);
+  document.getElementById('tot-pp').textContent = totaal > 0 ? '€ ' + (totaal/2).toFixed(0) + ' p.p.' : '€ —';
+}
+
 function go(naam, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
@@ -1107,6 +1244,11 @@ function go(naam, btn) {
 }
 
 laad();
+herbereken();
+BUDGET_IDS.forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', () => veldOpslaan(id, el.value));
+});
 
 /* Nodig omdat dit script nu een 'module' is: onclick/oninput in de HTML
    kunnen anders deze functies niet meer vinden. */
@@ -1115,6 +1257,7 @@ window.bewaar = bewaar;
 window.kopieer = kopieer;
 window.deel = deel;
 window.vulVerslag = vulVerslag;
+window.herbereken = herbereken;
 
 </script>
 </body>
