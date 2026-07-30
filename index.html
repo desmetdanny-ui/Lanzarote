@@ -1107,6 +1107,15 @@ function go(naam, btn) {
 }
 
 laad();
+
+/* Nodig omdat dit script nu een 'module' is: onclick/oninput in de HTML
+   kunnen anders deze functies niet meer vinden. */
+window.go = go;
+window.bewaar = bewaar;
+window.kopieer = kopieer;
+window.deel = deel;
+window.vulVerslag = vulVerslag;
+
 </script>
 </body>
 </html>
