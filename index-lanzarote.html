@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanzarote 2027 • Danny & Martine</title>
+<link rel="apple-touch-icon" href="icon-lanzarote.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lanzarote 2027">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1E1208">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --lava: #1E1208;
+  --lava2: #2E1C10;
+  --sand: #F0E8D5;
+  --terra: #B85A28;
+  --sea: #2A647E;
+  --sun: #D4A830;
+  --white: #FDFAF5;
+  --muted: #7A6E65;
+  --line: #E5DDD0;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--white);
+  color: var(--lava);
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--lava);
+  padding: 18px 18px 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 2px solid var(--terra);
+}
+
+.hdr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.hdr-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem;
+  color: var(--sand);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
+
+.hdr-sub {
+  font-size: 0.7rem;
+  color: var(--sun);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.btn-deel {
+  background: var(--terra);
+  color: white;
+  border: none;
+  padding: 8px 13px;
+  border-radius: 18px;
+  font-size: 0.72rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 0 0 12px;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  background: rgba(255,255,255,0.08);
+  color: rgba(240,232,213,0.7);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 13px;
+  border-radius: 16px;
+  font-size: 0.72rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 400;
+  transition: all 0.15s;
+}
+
+.tab.on {
+  background: var(--terra);
+  border-color: var(--terra);
+  color: white;
+  font-weight: 600;
+}
+
+/* ── PAGE ── */
+.page { display: none; padding-bottom: 80px; }
+.page.on { display: block; }
+
+/* ── HERO BAND ── */
+.hero {
+  padding: 22px 18px 18px;
+  background: linear-gradient(135deg, var(--terra) 0%, #7A3318 100%);
+  color: white;
+}
+
+.hero-eye {
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  opacity: 0.75;
+  margin-bottom: 5px;
+}
+
+.hero h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.hero p {
+  font-size: 0.8rem;
+  opacity: 0.88;
+  line-height: 1.55;
+}
+
+/* ── VLUCHT STRIP ── */
+.vlucht-strip {
+  margin: 12px 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(30,18,8,0.07);
+}
+
+.vlucht-rij {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  background: var(--lava2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.vlucht-rij:last-child { border-bottom: none; }
+
+.vlucht-ico { font-size: 1.1rem; flex-shrink: 0; }
+
+.vlucht-info { flex: 1; }
+
+.vlucht-num {
+  font-size: 0.67rem;
+  color: var(--sun);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.vlucht-route {
+  font-size: 0.88rem;
+  color: var(--sand);
+  font-weight: 600;
+}
+
+.vlucht-tijd {
+  font-size: 0.75rem;
+  color: rgba(240,232,213,0.6);
+  margin-top: 1px;
+}
+
+/* ── KAART ── */
+.card {
+  margin: 10px 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(30,18,8,0.06);
+}
+
+.card-hdr {
+  background: var(--lava);
+  color: var(--sand);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-hdr-titel {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.card-hdr-datum {
+  font-size: 0.68rem;
+  color: var(--sun);
+}
+
+.card-body { padding: 14px 16px; }
+
+/* ── TIJDBLOK ── */
+.tb {
+  display: flex;
+  gap: 13px;
+  padding-bottom: 13px;
+  margin-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+}
+.tb:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.tb-tijd {
+  min-width: 50px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: var(--terra);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+.tb-wat strong {
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 3px;
+  color: var(--lava);
+}
+
+.tb-wat p {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── KNOPPEN ── */
+.btn-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  background: var(--sea);
+  color: white;
+  text-decoration: none;
+  padding: 6px 13px;
+  border-radius: 16px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.btn-map svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+.park {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #EAF4EE;
+  color: #1E6E3A;
+  border-radius: 14px;
+  padding: 3px 9px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+/* ── NOTITIE ── */
+.notitie-blok {
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--line);
+  background: #FDFBF7;
+}
+
+.notitie-lbl {
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+textarea.notitie {
+  width: 100%;
+  min-height: 72px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--lava);
+  resize: vertical;
+  background: white;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+textarea.notitie:focus { outline: none; border-color: var(--terra); }
+textarea.notitie::placeholder { color: #BDB5AC; }
+
+/* ── OVERZICHTSTABEL ── */
+.ov-card {
+  margin: 10px 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(30,18,8,0.06);
+}
+
+.ov-hdr {
+  background: var(--sea);
+  color: white;
+  padding: 12px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ov-body { padding: 10px 16px; }
+
+.ov-rij {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: flex-start;
+}
+.ov-rij:last-child { border-bottom: none; }
+
+.ov-dag { font-weight: 600; font-size: 0.78rem; min-width: 74px; }
+.ov-txt { font-size: 0.78rem; color: var(--muted); flex: 1; line-height: 1.4; }
+
+.badge {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.b-hotel { background: #EBF3FA; color: var(--sea); }
+.b-eiland { background: #FEF0E8; color: var(--terra); }
+.b-buurt { background: #EDF7EF; color: #2A7A3C; }
+
+/* ── TIP BOX ── */
+.tipbox {
+  margin: 10px 14px;
+  background: #FFF8EC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--sun);
+}
+
+.tipbox h3 {
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #8A6A18;
+  margin-bottom: 9px;
+}
+
+.tip {
+  display: flex;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--lava);
+  line-height: 1.5;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(212,168,48,0.18);
+}
+.tip:last-child { border-bottom: none; }
+.tip-i { flex-shrink: 0; }
+
+/* ── HOTEL BOX ── */
+.hotelbox {
+  margin: 10px 14px;
+  background: var(--lava);
+  border-radius: 12px;
+  padding: 18px 16px;
+  color: var(--sand);
+}
+
+.hotelbox h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--sun);
+  margin-bottom: 12px;
+}
+
+.hotel-rij {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.hotel-rij .i { flex-shrink: 0; }
+
+/* ── RITME KAART ── */
+.ritme-card {
+  margin: 10px 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.ritme-hdr {
+  background: linear-gradient(135deg, var(--sun), #B08420);
+  color: var(--lava);
+  padding: 12px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ritme-body { padding: 12px 16px; }
+
+.ritme-rij {
+  display: flex;
+  gap: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ritme-rij:last-child { border-bottom: none; }
+
+.ritme-t { font-size: 0.72rem; font-weight: 600; color: var(--terra); min-width: 70px; }
+.ritme-a { font-size: 0.8rem; color: var(--lava); line-height: 1.4; }
+
+/* ── VERSLAG PAGE ── */
+.verslag-hdr {
+  background: linear-gradient(135deg, #4A2A6A, #2A1040);
+  padding: 22px 18px 18px;
+  color: white;
+}
+
+.verslag-dag-blok {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.verslag-dag-blok:last-child { border-bottom: none; }
+
+.verslag-dag-titel {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--terra);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.verslag-dag-datum {
+  font-size: 0.67rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.verslag-dag-tekst {
+  font-size: 0.8rem;
+  color: var(--lava);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-style: italic;
+}
+
+.verslag-leeg {
+  font-size: 0.78rem;
+  color: #C5BDB5;
+  font-style: italic;
+}
+
+.btn-verslag {
+  display: block;
+  margin: 14px 14px 4px;
+  background: var(--terra);
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  width: calc(100% - 28px);
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--lava);
+  color: var(--sand);
+  padding: 9px 18px;
+  border-radius: 18px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  white-space: nowrap;
+}
+.toast.zicht { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-title">🌋 Lanzarote 2027</div>
+      <div class="hdr-sub">Danny &amp; Martine • 2 – 12 januari</div>
+    </div>
+    <button class="btn-deel" onclick="deel()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Delen
+    </button>
+  </div>
+  <div class="tabs">
+    <button class="tab on"  onclick="go('overzicht',this)">Overzicht</button>
+    <button class="tab"     onclick="go('hotel',this)">Hotel</button>
+    <button class="tab"     onclick="go('fase1',this)">Fase 1</button>
+    <button class="tab"     onclick="go('fase2',this)">Fase 2</button>
+    <button class="tab"     onclick="go('fase3',this)">Fase 3</button>
+    <button class="tab"     onclick="go('verslag',this)">📖 Verslag</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ OVERZICHT -->
+<div id="p-overzicht" class="page on">
+
+  <div class="hero">
+    <div class="hero-eye">10 dagen • Lanzarote</div>
+    <h2>Jullie plan in één oogopslag</h2>
+    <p>Rustig aankomen, het eiland verkennen op eigen tempo, dan volop genieten van hotel en zon.</p>
+  </div>
+
+  <div class="vlucht-strip">
+    <div class="vlucht-rij">
+      <div class="vlucht-ico">✈️</div>
+      <div class="vlucht-info">
+        <div class="vlucht-num">SN 3787 — Heenvlucht</div>
+        <div class="vlucht-route">Brussel (BRU) → Lanzarote (ACE)</div>
+        <div class="vlucht-tijd">Zaterdag 2 jan &nbsp;·&nbsp; Vertrek 14:10 &nbsp;·&nbsp; Aankomst 17:25</div>
+      </div>
+    </div>
+    <div class="vlucht-rij">
+      <div class="vlucht-ico">🏡</div>
+      <div class="vlucht-info">
+        <div class="vlucht-num">SN 3788 — Terugvlucht</div>
+        <div class="vlucht-route">Lanzarote (ACE) → Brussel (BRU)</div>
+        <div class="vlucht-tijd">Dinsdag 12 jan &nbsp;·&nbsp; Vertrek 18:15 &nbsp;·&nbsp; Aankomst 23:30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ov-card">
+    <div class="ov-hdr">📅 Dagplanning</div>
+    <div class="ov-body">
+      <div class="ov-rij"><div class="ov-dag">Za 2 jan</div><div class="ov-txt">Aankomst 17:25 — inchecken, eerste avond</div><div class="badge b-hotel">Aankomst</div></div>
+      <div class="ov-rij"><div class="ov-dag">Zo 3 jan</div><div class="ov-txt">Marina Rubicón — boetieks, terrasje</div><div class="badge b-buurt">Omgeving</div></div>
+      <div class="ov-rij"><div class="ov-dag">Ma 4 jan</div><div class="ov-txt">Playa Blanca centrum — boulevard, winkels</div><div class="badge b-buurt">Omgeving</div></div>
+      <div class="ov-rij"><div class="ov-dag">Di 5 jan</div><div class="ov-txt">Playa Papagayo — stranden vlakbij</div><div class="badge b-buurt">Strand</div></div>
+      <div class="ov-rij"><div class="ov-dag">Wo 6 jan</div><div class="ov-txt">El Golfo &amp; Los Hervideros — westkust</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Do 7 jan</div><div class="ov-txt">Timanfaya Nationaal Park &amp; La Geria</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Vr 8 jan</div><div class="ov-txt">Mirador del Río &amp; Jameos del Agua</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Za 9 jan</div><div class="ov-txt">Arrecife — hoofdstad, haven, markt</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Zo 10 jan</div><div class="ov-txt">Vrije dag — hotel &amp; zwembad</div><div class="badge b-hotel">Hotel</div></div>
+      <div class="ov-rij"><div class="ov-dag">Ma 11 jan</div><div class="ov-txt">Vrije dag — laatste genieten</div><div class="badge b-hotel">Hotel</div></div>
+      <div class="ov-rij"><div class="ov-dag">Di 12 jan</div><div class="ov-txt">Vertrek — SN3788 om 18:15</div><div class="badge b-hotel">Vertrek</div></div>
+    </div>
+  </div>
+
+  <div class="tipbox">
+    <h3>✈️ Praktisch</h3>
+    <div class="tip"><span class="tip-i">🚗</span><span>Auto ophalen bij ACE na landing 17:25. Rijden naar hotel ±40 min via LZ-2.</span></div>
+    <div class="tip"><span class="tip-i">⏰</span><span>Jullie regel: altijd voor 15u terug in hotel voor snack en winterzon.</span></div>
+    <div class="tip"><span class="tip-i">📖</span><span>Noteer elke dag jullie belevenissen in het tabblad van die fase — alles komt samen in het Verslag.</span></div>
+    <div class="tip"><span class="tip-i">🗺️</span><span>Download offline kaart van Lanzarote in Google Maps vóór vertrek.</span></div>
+    <div class="tip"><span class="tip-i">🎟️</span><span>Boek Timanfaya tickets op voorhand via de website van Cabildo de Lanzarote.</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ HOTEL -->
+<div id="p-hotel" class="page">
+
+  <div class="hero" style="background: linear-gradient(135deg, var(--sea) 0%, #1A3E52 100%);">
+    <div class="hero-eye">Jullie basis</div>
+    <h2>Hotel &amp; dagritme</h2>
+    <p>Privilege All Inclusive — alles geregeld, geen beslissomoeheid.</p>
+  </div>
+
+  <div class="hotelbox">
+    <h3>H10 Rubicón Horizons Collection</h3>
+    <div class="hotel-rij"><span class="i">📍</span><span>Playa Blanca, Yaiza, Lanzarote</span></div>
+    <div class="hotel-rij"><span class="i">⭐</span><span>5 sterren • Privilege All Inclusive</span></div>
+    <div class="hotel-rij"><span class="i">🏊</span><span>Eigen Privilege zwembad met bistro bar</span></div>
+    <div class="hotel-rij"><span class="i">🍽️</span><span>Blue Moon restaurant + meerdere à la carte</span></div>
+    <div class="hotel-rij"><span class="i">🎭</span><span>Avondanimatie: shows, live muziek, thema-avonden</span></div>
+    <div class="hotel-rij"><span class="i">🚕</span><span>Taxi naar centrum Playa Blanca: ±€5 • Bus: €1,50</span></div>
+    <a class="btn-map" style="margin-top:10px;" href="https://maps.google.com/?q=H10+Rubicon+Horizons+Collection+Playa+Blanca+Lanzarote" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      Bekijk op Maps
+    </a>
+  </div>
+
+  <div class="ritme-card">
+    <div class="ritme-hdr">☀️ Jullie ideale dagritme</div>
+    <div class="ritme-body">
+      <div class="ritme-rij"><div class="ritme-t">08:30–10:00</div><div class="ritme-a">Uitgebreid Privilege ontbijt</div></div>
+      <div class="ritme-rij"><div class="ritme-t">10:00–13:00</div><div class="ritme-a">Voormiddag — winkels, uitstap of eilandverkenning</div></div>
+      <div class="ritme-rij"><div class="ritme-t">13:00–14:00</div><div class="ritme-a">Lunch onderweg of terug in hotel</div></div>
+      <div class="ritme-rij"><div class="ritme-t">14:00–15:30</div><div class="ritme-a">Aankomst hotel — snack bij zwembad</div></div>
+      <div class="ritme-rij"><div class="ritme-t">15:30–18:00</div><div class="ritme-a">Zwembad — liggen, lezen, winterzon</div></div>
+      <div class="ritme-rij"><div class="ritme-t">18:00–19:00</div><div class="ritme-a">Aperitief — Privilege lounge of bistro bar</div></div>
+      <div class="ritme-rij"><div class="ritme-t">19:30–21:30</div><div class="ritme-a">Avondmaal — buffet of à la carte</div></div>
+      <div class="ritme-rij"><div class="ritme-t">21:30–23:00</div><div class="ritme-a">Afsluiter — avondshow, live muziek, cocktail</div></div>
+    </div>
+  </div>
+
+  <div class="tipbox">
+    <h3>💡 Privilege tips</h3>
+    <div class="tip"><span class="tip-i">📋</span><span>Bij check-in meteen à la carte reserveringen maken voor de hele week — vol geraken gaat snel.</span></div>
+    <div class="tip"><span class="tip-i">🛏️</span><span>Kussenmenu aanvragen bij check-in — groot verschil in slaapcomfort.</span></div>
+    <div class="tip"><span class="tip-i">🍹</span><span>Premium dranken inbegrepen — geen verrassingen op de rekening.</span></div>
+    <div class="tip"><span class="tip-i">🌙</span><span>Turndown service met kleine attentie elke avond — typisch Privilege touch.</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ FASE 1 -->
+<div id="p-fase1" class="page">
+
+  <div class="hero" style="background: linear-gradient(135deg, #2A7A3A 0%, #1A5228 100%);">
+    <div class="hero-eye">Dag 1 t/m 4 • 2 – 5 januari</div>
+    <h2>Fase 1 — Aankomen &amp; omgeving</h2>
+    <p>Rustig settelen. Voormiddagen buiten, rest volledig hotel.</p>
+  </div>
+
+  <!-- DAG 1 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 1 — Aankomst</div><div class="card-hdr-datum">Za 2 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">17:25</div>
+        <div class="tb-wat">
+          <strong>Landing Lanzarote — SN3787</strong>
+          <p>Auto ophalen, rijden naar hotel via LZ-2. ±35 km, 40 minuten. Gratis parkeren bij hotel.</p>
+          <a class="btn-map" href="https://maps.google.com/?saddr=Lanzarote+Airport+ACE&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Route luchthaven → hotel</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">Avond</div>
+        <div class="tb-wat">
+          <strong>Inchecken &amp; eerste avond</strong>
+          <p>Privilege reserveringen maken voor de week. Eerste aperitief, eerste avondmaal.</p>
+        </div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag1" placeholder="Hoe was de aankomst? Eerste indruk hotel? Wat viel op?" oninput="bewaar('dag1',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- DAG 2 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 2 — Marina Rubicón</div><div class="card-hdr-datum">Zo 3 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">10:00</div>
+        <div class="tb-wat">
+          <strong>Marina Rubicón — te voet vanuit hotel</strong>
+          <p>5 minuten wandelen. Luxe jachthaven, boetieks, terrassen, zondagsmarkt. Rustig slenteren langs de jachten.</p>
+          <span class="park">🚶 Te voet</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Marina+Rubicon+Playa+Blanca+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Marina Rubicón</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:00</div>
+        <div class="tb-wat"><strong>Terug hotel — lunch &amp; zwembad</strong><p>Eerste namiddag aan het Privilege zwembad.</p></div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag2" placeholder="Wat zagen jullie aan de marina? Leuke winkeltjes? Goed terrasje?" oninput="bewaar('dag2',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- DAG 3 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 3 — Playa Blanca centrum</div><div class="card-hdr-datum">Ma 4 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">10:00</div>
+        <div class="tb-wat">
+          <strong>Taxi naar Playa Blanca centrum — €5</strong>
+          <p>Boulevard, winkels, ijssalon, lokale winkeltjes. Maandag rustig. Loop richting vuurtoren langs de kust.</p>
+          <span class="park">🚕 Taxi aan hotel</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Playa+Blanca+boulevard+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Playa Blanca centrum</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:00</div>
+        <div class="tb-wat"><strong>Taxi terug — namiddag hotel</strong><p>Privilege lounge voor het avondeten.</p></div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag3" placeholder="Hoe was de boulevard? Wat kochten jullie? Goed koffietje ergens?" oninput="bewaar('dag3',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- DAG 4 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 4 — Playa Papagayo</div><div class="card-hdr-datum">Di 5 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">10:00</div>
+        <div class="tb-wat">
+          <strong>Playa Papagayo — 10 km van hotel</strong>
+          <p>Zes stranden in beschermd natuurgebied. Turkoois water, rustig in januari. Toegang ±€3 per auto. Korte vlakke wandelingen tussen de stranden.</p>
+          <span class="park">🅿️ Betaalde parking €3</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Playa+Papagayo+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Route naar Papagayo</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:00</div>
+        <div class="tb-wat"><strong>Terug hotel</strong><p>Morgen start de eilandverkenning.</p></div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag4" placeholder="Welk strand was het mooist? Hoe was het water? Veel mensen?" oninput="bewaar('dag4',this.value)"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ FASE 2 -->
+<div id="p-fase2" class="page">
+
+  <div class="hero">
+    <div class="hero-eye">Dag 5 t/m 8 • 6 – 9 januari</div>
+    <h2>Fase 2 — Het eiland verkennen</h2>
+    <p>Vier rustige voormiddagen met de auto. Telkens voor 15u terug. Geen stress, geen haast.</p>
+  </div>
+
+  <!-- DAG 5 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 5 — El Golfo &amp; westkust</div><div class="card-hdr-datum">Wo 6 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">09:30</div>
+        <div class="tb-wat">
+          <strong>El Golfo — groene lagune</strong>
+          <p>±35 km, 40 min. Felgroene lagune Charco de los Clicos in een vulkaankrater. Zwarte lava, turquoise water. Parking direct bij uitkijkpunt, tientallen meters lopen.</p>
+          <span class="park">🅿️ Gratis parking</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Charco+de+los+Clicos+El+Golfo+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>El Golfo</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">11:00</div>
+        <div class="tb-wat">
+          <strong>Los Hervideros — kookpotten</strong>
+          <p>5 km verder. Zeewater spuit door gaten in lava omhoog. Vlak pad langs de rotsen.</p>
+          <span class="park">🅿️ Gratis parking naast site</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Los+Hervideros+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Los Hervideros</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:00</div>
+        <div class="tb-wat">
+          <strong>Terug hotel — voor 15u</strong>
+          <a class="btn-map" href="https://maps.google.com/?saddr=Los+Hervideros+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Route terug</a>
+        </div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag5" placeholder="Hoe zag die groene lagune eruit? Indrukwekkend? De kleuren?" oninput="bewaar('dag5',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- DAG 6 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 6 — Timanfaya &amp; La Geria</div><div class="card-hdr-datum">Do 7 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">09:30</div>
+        <div class="tb-wat">
+          <strong>Timanfaya Nationaal Park</strong>
+          <p>Meest indrukwekkende van het eiland. Zwarte lavavlakten, vulkaankraters — maanlandschap. Rondrit met parkbus inbegrepen. Entree ±€13 p.p.</p>
+          <span class="park">🅿️ Grote parking bij ingang</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Parque+Nacional+de+Timanfaya+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Timanfaya</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">11:30</div>
+        <div class="tb-wat">
+          <strong>La Geria — wijnstreek</strong>
+          <p>20 min rijden. Wijnranken in zwarte lavatrechters — uniek landschap. Stop bij Bodega La Geria voor proeverij (optioneel).</p>
+          <span class="park">🅿️ Parking bij bodega</span>
+          <a class="btn-map" href="https://maps.google.com/?q=La+Geria+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>La Geria</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:00</div>
+        <div class="tb-wat">
+          <strong>Terug hotel — ±25 min via Yaiza</strong>
+          <a class="btn-map" href="https://maps.google.com/?saddr=La+Geria+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Route terug</a>
+        </div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag6" placeholder="Timanfaya — wat maakte indruk? Het maanlandschap? La Geria — wijn geproefd?" oninput="bewaar('dag6',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- DAG 7 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 7 — Mirador del Río &amp; Jameos</div><div class="card-hdr-datum">Vr 8 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">09:00</div>
+        <div class="tb-wat"><strong>Vroeg vertrek — noorden is 80 km</strong><p>Rustig noordwaarts rijden via de kust. Mooi landschap onderweg.</p></div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">10:30</div>
+        <div class="tb-wat">
+          <strong>Mirador del Río</strong>
+          <p>Uitkijkpunt ingebouwd in de vulkanische rots op 475 m hoogte. Spectaculair uitzicht op La Graciosa. Café met panoramaramen. Entree ±€5 p.p.</p>
+          <span class="park">🅿️ Gratis parking naast ingang</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Mirador+del+Rio+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Mirador del Río</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">11:30</div>
+        <div class="tb-wat">
+          <strong>Jameos del Agua</strong>
+          <p>Lavagrot met ondergronds meer en blinde albino krabben. Concertzaal in de grot. Entree ±€11 p.p.</p>
+          <span class="park">🅿️ Eigen ruime parking</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Jameos+del+Agua+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Jameos del Agua</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:00</div>
+        <div class="tb-wat">
+          <strong>Terug hotel — ±55 min</strong>
+          <a class="btn-map" href="https://maps.google.com/?saddr=Jameos+del+Agua+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Route terug</a>
+        </div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag7" placeholder="Mirador del Río — La Graciosa zichtbaar? Hoe was het uitzicht? Jameos — de grot, de krabben?" oninput="bewaar('dag7',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- DAG 8 -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 8 — Arrecife</div><div class="card-hdr-datum">Za 9 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">10:00</div>
+        <div class="tb-wat">
+          <strong>Arrecife — hoofdstad van Lanzarote</strong>
+          <p>±35 km, 35 min. Authentieke stad, weinig massatoerisme. Haven, winkeltjes, zaterdagmarkt. Parkeren aan de haven.</p>
+          <span class="park">🅿️ Haven — gratis of blauwe zone</span>
+          <a class="btn-map" href="https://maps.google.com/?q=Haven+Arrecife+Lanzarote" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Arrecife haven</a>
+        </div>
+      </div>
+      <div class="tb">
+        <div class="tb-tijd">13:30</div>
+        <div class="tb-wat">
+          <strong>Terug hotel</strong>
+          <a class="btn-map" href="https://maps.google.com/?saddr=Arrecife+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Route terug</a>
+        </div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Onze belevenissen</div>
+      <textarea class="notitie" id="n-dag8" placeholder="Arrecife — hoe was de sfeer? De markt? Iets bijzonders gezien of gedaan?" oninput="bewaar('dag8',this.value)"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ FASE 3 -->
+<div id="p-fase3" class="page">
+
+  <div class="hero" style="background: linear-gradient(135deg, var(--sea) 0%, #1A3E52 100%);">
+    <div class="hero-eye">Dag 9 &amp; 10 • 10 – 11 januari</div>
+    <h2>Fase 3 — Pure ontspanning</h2>
+    <p>Niets moeten. Zwembad, zon, aperitief, goed eten.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 9 &amp; 10 — Vrije dagen</div><div class="card-hdr-datum">Zo 10 &amp; Ma 11 januari</div></div>
+    <div class="card-body">
+      <div class="tb"><div class="tb-tijd">Ochtend</div><div class="tb-wat"><strong>Uitgebreid Privilege ontbijt</strong><p>Geen tijdsdruk. Krant, koffie, goed ontbijt.</p></div></div>
+      <div class="tb"><div class="tb-tijd">Voormiddag</div><div class="tb-wat"><strong>Naar keuze</strong><p>Nog een uitstap naar Marina of vroeg aan het zwembad. Totaal vrij.</p></div></div>
+      <div class="tb"><div class="tb-tijd">Namiddag</div><div class="tb-wat"><strong>Zwembad &amp; winterzon</strong><p>Privilege snack bar, cocktail, ligstoel. Zon opvangen voor de terugreis.</p></div></div>
+      <div class="tb"><div class="tb-tijd">Avond</div><div class="tb-wat"><strong>Laatste avondmaaltijden</strong><p>Vraag op dag 9 een tafel in Blue Moon voor de laatste avond. Afsluiten in stijl.</p></div></div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Zondag 10 jan</div>
+      <textarea class="notitie" id="n-dag9" placeholder="Hoe was de rustdag? Blue Moon restaurant?" oninput="bewaar('dag9',this.value)"></textarea>
+      <div class="notitie-lbl" style="margin-top:10px;">✏️ Maandag 11 jan</div>
+      <textarea class="notitie" id="n-dag10" placeholder="Laatste volledige dag. Wat voelen jullie? Wat wilden jullie graag nog doen?" oninput="bewaar('dag10',this.value)"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 11 — Vertrek</div><div class="card-hdr-datum">Di 12 januari</div></div>
+    <div class="card-body">
+      <div class="tb">
+        <div class="tb-tijd">Ochtend</div>
+        <div class="tb-wat">
+          <strong>Uitchecken &amp; luchthaven</strong>
+          <p>Vlucht SN3788 vertrekt om 18:15. Uitchecken voor 12u — vraag late check-out of bagageopslag. Tank voltanken bij luchthaven.</p>
+          <a class="btn-map" href="https://maps.google.com/?saddr=H10+Rubicon+Horizons+Collection+Playa+Blanca&daddr=Lanzarote+Airport+ACE" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Hotel → Luchthaven</a>
+        </div>
+      </div>
+    </div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Laatste gedachten</div>
+      <textarea class="notitie" id="n-dag11" placeholder="Wat nemen jullie mee van deze reis? Mooiste moment? Zouden jullie terugkeren?" oninput="bewaar('dag11',this.value)"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ VERSLAG -->
+<div id="p-verslag" class="page">
+
+  <div class="verslag-hdr">
+    <div class="hero-eye">Herinneringen</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:white;font-weight:600;margin-bottom:5px;">📖 Ons reisverslag</h2>
+    <p style="font-size:0.8rem;opacity:0.85;line-height:1.5;">Alles wat jullie noteerden, samengebracht als blijvende herinnering.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="card-hdr" style="background:#4A2A6A;">
+      <div class="card-hdr-titel">Danny &amp; Martine — Lanzarote 2027</div>
+      <div class="card-hdr-datum">2 – 12 januari</div>
+    </div>
+    <div id="verslag-inhoud" class="card-body"></div>
+  </div>
+
+  <button class="btn-verslag" onclick="kopieer()">📋 Kopieer verslag als tekst</button>
+
+  <div class="tipbox" style="margin-top:4px;">
+    <h3>💡 Over dit verslag</h3>
+    <div class="tip"><span class="tip-i">✍️</span><span>Noteer elke dag iets — ook kleine dingen. Die details zijn later het meest waardevol.</span></div>
+    <div class="tip"><span class="tip-i">📤</span><span>Kopieer de tekst en plak ze in een mail of WhatsApp naar kinderen of vrienden.</span></div>
+    <div class="tip"><span class="tip-i">🖨️</span><span>Wil je het afdrukken? Plak de tekst in Word of Google Docs.</span></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC399MvSiF3PWF_ZTdFr0UqaoC6Fo7WsrY",
+  authDomain: "wiezen-club.firebaseapp.com",
+  projectId: "wiezen-club",
+  storageBucket: "wiezen-club.firebasestorage.app",
+  messagingSenderId: "184449254432",
+  appId: "1:184449254432:web:e4f4f93acae57a9a736845"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const guideDocRef = doc(db, 'guides', 'lanzarote2027');
+
+let guideData = {};
+const saveTimers = {};
+function veldOpslaan(id, value){
+  guideData[id] = value;
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => {
+    setDoc(guideDocRef, { [id]: value }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+  }, 500);
+}
+
+const DAGEN = [
+  { id:'dag1',  titel:'Dag 1 — Aankomst',                datum:'Zaterdag 2 januari' },
+  { id:'dag2',  titel:'Dag 2 — Marina Rubicón',          datum:'Zondag 3 januari' },
+  { id:'dag3',  titel:'Dag 3 — Playa Blanca centrum',    datum:'Maandag 4 januari' },
+  { id:'dag4',  titel:'Dag 4 — Playa Papagayo',          datum:'Dinsdag 5 januari' },
+  { id:'dag5',  titel:'Dag 5 — El Golfo & westkust',     datum:'Woensdag 6 januari' },
+  { id:'dag6',  titel:'Dag 6 — Timanfaya & La Geria',    datum:'Donderdag 7 januari' },
+  { id:'dag7',  titel:'Dag 7 — Mirador del Río & Jameos',datum:'Vrijdag 8 januari' },
+  { id:'dag8',  titel:'Dag 8 — Arrecife',                datum:'Zaterdag 9 januari' },
+  { id:'dag9',  titel:'Dag 9 — Vrije dag',               datum:'Zondag 10 januari' },
+  { id:'dag10', titel:'Dag 10 — Vrije dag',              datum:'Maandag 11 januari' },
+  { id:'dag11', titel:'Dag 11 — Vertrek',                datum:'Dinsdag 12 januari' },
+];
+
+function bewaar(id, val) { veldOpslaan(id, val); }
+
+onSnapshot(guideDocRef, (snap) => {
+  guideData = snap.exists() ? snap.data() : {};
+  DAGEN.forEach(d => {
+    const el = document.getElementById('n-'+d.id);
+    if(el && guideData[d.id] !== undefined) el.value = guideData[d.id];
+  });
+}, (err) => console.error('sync error', err));
+
+function laad() { /* wordt nu via onSnapshot hierboven live gedaan */ }
+
+function vulVerslag() {
+  const c = document.getElementById('verslag-inhoud');
+  let html = '';
+  let heeftIets = false;
+  DAGEN.forEach(d => {
+    const el = document.getElementById('n-'+d.id);
+    const tekst = el ? el.value.trim() : '';
+    if (tekst) heeftIets = true;
+    html += `<div class="verslag-dag-blok">
+      <div class="verslag-dag-titel">${d.titel}</div>
+      <div class="verslag-dag-datum">${d.datum}</div>
+      ${tekst
+        ? `<div class="verslag-dag-tekst">${tekst.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+        : `<div class="verslag-leeg">Nog geen notitie voor deze dag.</div>`
+      }
+    </div>`;
+  });
+  if (!heeftIets) {
+    c.innerHTML = '<p style="color:#BDB5AC;font-size:0.8rem;font-style:italic;text-align:center;padding:24px 0;">Vul belevenissen in bij elke dag — ze verschijnen hier automatisch.</p>';
+  } else {
+    c.innerHTML = html;
+  }
+}
+
+function kopieer() {
+  let txt = 'LANZAROTE 2027 — Danny & Martine\n2 – 12 januari\n\n';
+  DAGEN.forEach(d => {
+    const el = document.getElementById('n-'+d.id);
+    const tekst = el ? el.value.trim() : '';
+    txt += d.titel.toUpperCase() + '\n' + d.datum + '\n';
+    txt += (tekst || '(geen notitie)') + '\n\n';
+  });
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(() => toast('✅ Verslag gekopieerd!')).catch(() => toast('Kopieer handmatig'));
+  } else {
+    toast('Kopieer de tekst handmatig');
+  }
+}
+
+function deel() {
+  if (navigator.share) {
+    navigator.share({ title:'Lanzarote 2027 — Danny & Martine', url: window.location.href }).catch(()=>{});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href).then(() => toast('🔗 Link gekopieerd!'));
+  } else {
+    toast('Kopieer de URL uit de adresbalk');
+  }
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('zicht');
+  setTimeout(() => t.classList.remove('zicht'), 2600);
+}
+
+function go(naam, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('p-'+naam).classList.add('on');
+  btn.classList.add('on');
+  window.scrollTo(0,0);
+  if (naam === 'verslag') vulVerslag();
+}
+
+laad();
+</script>
+</body>
+</html>
