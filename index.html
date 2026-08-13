@@ -705,7 +705,7 @@ textarea.notitie::placeholder { color: #BDB5AC; }
       <div id="bev-lijst"></div>
       <div class="bev-add-row">
         <input type="text" class="bev-naam" id="bev-naam" placeholder="Naam (bv. vluchtticket SN3787)">
-        <label style="background:var(--terra); color:white; border:none; border-radius:8px; padding:0 14px; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; white-space:nowrap;">📷 Kies foto<input type="file" accept="image/*" id="bev-file" style="display:none;" onchange="handleBevestigingFile()"></label>
+        <label style="background:var(--terra); color:white; border:none; border-radius:8px; padding:0 14px; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; white-space:nowrap;">📷 Kies bestand<input type="file" accept="image/*,application/pdf" id="bev-file" style="display:none;" onchange="handleBevestigingFile()"></label>
       </div>
       <div class="bev-add-row">
         <input type="text" class="bev-url" id="bev-url" placeholder="Of plak zelf een link (Google Drive...)">
@@ -1225,6 +1225,13 @@ function compressImage(file, maxDim, quality){
   });
 }
 async function uploadBevestigingFoto(file, pad){
+  const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  if (isPdf){
+    const bestandsnaam = pad + '_' + Date.now() + '.pdf';
+    const ref = storageRef(storage, 'bevestigingen/' + bestandsnaam);
+    await uploadBytes(ref, file, {contentType:'application/pdf'});
+    return await getDownloadURL(ref);
+  }
   let blob = await compressImage(file, 1600, 0.72);
   if (blob.size > 900000){ blob = await compressImage(file, 1200, 0.55); }
   const bestandsnaam = pad + '_' + Date.now() + '.jpg';
