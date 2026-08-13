@@ -426,6 +426,68 @@ textarea.notitie::placeholder { color: #BDB5AC; }
 }
 .hotel-rij .i { flex-shrink: 0; }
 
+/* ── BEVESTIGINGEN ── */
+.bev-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.bev-item:last-child { border-bottom: none; }
+.bev-item a {
+  flex: 1;
+  color: var(--sea);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bev-item a:before { content: "📎 "; }
+.bev-del {
+  color: var(--terra);
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bev-add-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.bev-add-row input {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  padding: 8px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--lava);
+}
+.bev-add-row input.bev-naam { flex: 1; }
+.bev-add-row input.bev-url { flex: 2; }
+.bev-add-row button {
+  background: var(--terra);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bev-hint {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
 /* ── RITME KAART ── */
 .ritme-card {
   margin: 10px 14px;
@@ -635,6 +697,19 @@ textarea.notitie::placeholder { color: #BDB5AC; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
       Bekijk op Maps
     </a>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">📎 Bevestigingen</div><div class="card-hdr-datum">Vluchten, transfer, tickets...</div></div>
+    <div class="card-body">
+      <div id="bev-lijst"></div>
+      <div class="bev-add-row">
+        <input type="text" class="bev-naam" id="bev-naam" placeholder="Naam (bv. vluchtticket SN3787)">
+        <input type="text" class="bev-url" id="bev-url" placeholder="Link (Google Drive, e-mail...)">
+        <button onclick="voegBevestigingToe()">+</button>
+      </div>
+      <div class="bev-hint">Maak een foto of screenshot van de bevestiging, zet die op Google Drive, deel de link ("Iedereen met de link"), en plak die hier.</div>
+    </div>
   </div>
 
   <div class="ritme-card">
@@ -1149,6 +1224,48 @@ const DAGEN = [
 
 function bewaar(id, val) { veldOpslaan(id, val); }
 
+/* ================= BEVESTIGINGEN =================
+   Links naar vluchttickets, transferbevestigingen, tickets, etc.
+   Geen eigen bestandsopslag - gewoon een link (bv. naar een
+   gedeelde foto/screenshot op Google Drive) per bevestiging.
+   ==================================================== */
+function renderBevestigingen(){
+  const lijst = guideData.bevestigingen || [];
+  const el = document.getElementById('bev-lijst');
+  if (!el) return;
+  el.innerHTML = lijst.map((b, i) => `
+    <div class="bev-item">
+      <a href="${escapeAttr(b.url)}" target="_blank" rel="noopener">${escapeHtml(b.naam || b.url)}</a>
+      <span class="bev-del" onclick="verwijderBevestiging(${i})">verwijder</span>
+    </div>`).join('') || '<div class="verslag-leeg">Nog geen bevestigingen gekoppeld</div>';
+}
+
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str); }
+
+function voegBevestigingToe(){
+  const naamInp = document.getElementById('bev-naam');
+  const urlInp = document.getElementById('bev-url');
+  const naam = naamInp.value.trim();
+  const url = urlInp.value.trim();
+  if (!url) return;
+  guideData.bevestigingen = guideData.bevestigingen || [];
+  guideData.bevestigingen.push({naam, url});
+  setDoc(guideDocRef, { bevestigingen: guideData.bevestigingen }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+  naamInp.value = '';
+  urlInp.value = '';
+  renderBevestigingen();
+}
+
+function verwijderBevestiging(i){
+  if (!guideData.bevestigingen) return;
+  guideData.bevestigingen.splice(i, 1);
+  setDoc(guideDocRef, { bevestigingen: guideData.bevestigingen }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+  renderBevestigingen();
+}
+
 onSnapshot(guideDocRef, (snap) => {
   guideData = snap.exists() ? snap.data() : {};
   DAGEN.forEach(d => {
@@ -1159,6 +1276,7 @@ onSnapshot(guideDocRef, (snap) => {
     const el = document.getElementById(id);
     if(el && guideData[id] !== undefined) el.value = guideData[id];
   });
+  renderBevestigingen();
   herbereken();
 }, (err) => console.error('sync error', err));
 
@@ -1258,6 +1376,8 @@ window.kopieer = kopieer;
 window.deel = deel;
 window.vulVerslag = vulVerslag;
 window.herbereken = herbereken;
+window.voegBevestigingToe = voegBevestigingToe;
+window.verwijderBevestiging = verwijderBevestiging;
 
 </script>
 </body>
