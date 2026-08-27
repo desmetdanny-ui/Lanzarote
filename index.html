@@ -2,202 +2,877 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Lanzarote · Reisgids</title>
-<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="apple-touch-icon" sizes="167x167" href="icon-167.png">
-<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
-<link rel="apple-touch-icon" sizes="120x120" href="icon-120.png">
-<link rel="icon" sizes="32x32" href="icon-32.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanzarote 2027 • Danny & Martine</title>
+<link rel="apple-touch-icon" href="icon-lanzarote.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lanzarote 2027">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-
+<meta name="theme-color" content="#1E1208">
 <style>
-  :root{
-    --navy: #221F1E; --navy-deep: #171514; --sand: #F5F0E8; --sand-light: #FAF7F1;
-    --terra: #E1642A; --seaglass: #4A7A5A; --ink: #26221F; --line: rgba(245,240,232,0.16);
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  body{margin:0; background:var(--navy); color:var(--sand-light); font-family:'Inter',sans-serif; line-height:1.55;}
-  h1,h2,h3{font-family:'Newsreader',serif; margin:0;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
 
-  .board{background:var(--navy-deep); padding:44px 20px 30px; border-bottom:3px solid var(--terra);}
-  .board-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--terra); margin-bottom:12px;}
-  .board h1{font-size:clamp(36px,9vw,60px); font-style:italic; font-weight:600; letter-spacing:-0.01em; margin-bottom:6px;}
-  .board .dest-edit{font-family:'IBM Plex Mono',monospace; font-size:13px; color:rgba(237,228,211,0.85); cursor:pointer;}
-  .board .dates-edit{margin-top:14px; font-family:'IBM Plex Mono',monospace; font-size:14px; cursor:pointer; color:var(--sand-light);}
-  .edit-hint{color:var(--terra); font-size:11px;}
+:root {
+  --lava: #1E1208;
+  --lava2: #2E1C10;
+  --sand: #F0E8D5;
+  --terra: #B85A28;
+  --sea: #2A647E;
+  --sun: #D4A830;
+  --white: #FDFAF5;
+  --muted: #7A6E65;
+  --line: #E5DDD0;
+}
 
-  main{max-width:740px; margin:0 auto; padding:0 20px 100px;}
-  section{margin-top:44px;}
-  .sec-eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--terra); margin-bottom:6px;}
-  section h2{font-size:26px; font-style:italic; color:var(--sand-light); margin-bottom:16px;}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
-  .card{background:var(--sand); color:var(--ink); border-radius:5px; padding:16px 18px; margin-bottom:10px; border:1px solid rgba(0,0,0,0.05);}
-  .card a{color:var(--navy); font-weight:600; text-decoration:none; border-bottom:1.5px solid var(--terra);}
-  .card .meta{font-family:'IBM Plex Mono',monospace; font-size:12px; color:#5b5a4e; margin-top:4px;}
-  .card .row{display:flex; justify-content:space-between; align-items:center; gap:10px;}
-  .icon-btn{color:var(--navy); cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:15px; flex-shrink:0; padding:4px 6px; font-weight:700;}
-  .icon-btn.del{color:#a13d2b;}
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--white);
+  color: var(--lava);
+  min-height: 100vh;
+  font-size: 15px;
+}
 
-  .inline-add{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;}
-  input[type=text], input[type=date], input[type=number]{
-    flex:1; min-width:120px; padding:9px 10px; border-radius:4px; border:1px solid rgba(0,0,0,0.15);
-    font-family:'Inter',sans-serif; font-size:14px; background:white; color:var(--ink);
-  }
-  .btn{background:var(--terra); color:white; border:none; border-radius:4px; padding:9px 14px; font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; flex-shrink:0; font-weight:600;}
-  .btn.file-btn{display:flex; align-items:center; white-space:nowrap;}
-  .btn.file-btn input[type=file]{display:none;}
+.hdr {
+  background: var(--lava);
+  padding: 18px 18px 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 2px solid var(--terra);
+}
 
-  /* dagenboom */
-  .day-tree{margin-bottom:10px;}
-  .day-btn{width:100%; text-align:left; background:rgba(237,228,211,0.14); border:1px solid rgba(237,228,211,0.3); border-radius:4px; padding:12px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:'IBM Plex Mono',monospace; color:var(--sand-light);}
-  .day-btn .day-btn-title{font-weight:600; font-size:14.5px; text-transform:capitalize;}
-  .day-btn .day-btn-sum{font-size:11px; color:rgba(237,228,211,0.7); margin-top:2px;}
-  .day-btn .chevron{transition:transform .15s ease; color:var(--terra);}
-  .day-btn.open .chevron{transform:rotate(90deg);}
-  .day-content{display:none; padding:14px 12px 6px; background:rgba(237,228,211,0.08); border:1px solid rgba(237,228,211,0.3); border-top:none; border-radius:0 0 4px 4px;}
-  .day-content.open{display:block;}
-  .day-block-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; color:var(--terra); font-weight:600; font-family:'IBM Plex Mono',monospace; margin:12px 0 6px;}
-  .day-block-label:first-child{margin-top:0;}
-  .activity-box{background:rgba(237,228,211,0.14); border:1px solid rgba(237,228,211,0.25); border-radius:3px; padding:10px 12px; font-size:13.5px; cursor:pointer; min-height:20px;}
-  .activity-box.empty-txt{color:rgba(237,228,211,0.55); font-style:italic;}
-  .meal-row{background:rgba(237,228,211,0.14); border:1px solid rgba(237,228,211,0.25); border-radius:3px; padding:9px 12px; margin-bottom:6px; font-size:13.5px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
-  .meal-row a{color:var(--sand-light); font-weight:700; text-decoration:underline;}
-  .meal-empty{color:rgba(237,228,211,0.55); font-style:italic;}
-  .meal-price{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--terra); font-weight:600;}
-  .meal-review{flex-basis:100%; font-size:12px; font-style:italic; color:rgba(237,228,211,0.75);}
+.hdr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
 
-  .cost-row{display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:14px; padding:8px 0; border-bottom:1px dotted var(--line);}
-  .cost-row.total{color:var(--terra); font-weight:700; font-size:18px; border-bottom:none; padding-top:12px;}
+.hdr-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem;
+  color: var(--sand);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+}
 
-  .status-picker{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
-  .status-picker button{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; padding:6px 10px; border-radius:20px; border:1px solid rgba(237,228,211,0.3); background:transparent; color:rgba(237,228,211,0.7);}
-  .status-picker button.active{background:var(--terra); color:white; border-color:var(--terra);}
+.hdr-sub {
+  font-size: 0.7rem;
+  color: var(--sun);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  font-weight: 500;
+}
 
-  .check-item{display:flex; align-items:flex-start; gap:10px; margin-bottom:9px; font-size:14px;}
-  .check-item .box{width:18px; height:18px; border:1.5px solid var(--terra); border-radius:3px; flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; color:var(--terra);}
-  .check-item .box.done{background:var(--terra); color:white;}
-  .check-item .txt.done{text-decoration:line-through; opacity:0.5;}
+.btn-deel {
+  background: var(--terra);
+  color: white;
+  border: none;
+  padding: 8px 13px;
+  border-radius: 18px;
+  font-size: 0.72rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
 
-  .sync-status{position:fixed; bottom:14px; left:50%; transform:translateX(-50%); font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:rgba(237,228,211,0.4); display:flex; align-items:center; gap:6px;}
-  .dot{width:6px; height:6px; border-radius:50%; background:var(--seaglass);}
-  .dot.off{background:#a13d2b;}
+.tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 0 0 12px;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
 
-  .empty{text-align:center; padding:20px 10px; color:rgba(237,228,211,0.55); font-size:14px;}
-  a.backlink{color:var(--terra); font-weight:600;}
+.tab {
+  background: rgba(255,255,255,0.08);
+  color: rgba(240,232,213,0.7);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 13px;
+  border-radius: 16px;
+  font-size: 0.72rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 400;
+  transition: all 0.15s;
+}
+
+.tab.on {
+  background: var(--terra);
+  border-color: var(--terra);
+  color: white;
+  font-weight: 600;
+}
+
+.page { display: none; padding-bottom: 80px; }
+.page.on { display: block; }
+
+.hero {
+  padding: 22px 18px 18px;
+  background: linear-gradient(135deg, var(--terra) 0%, #7A3318 100%);
+  color: white;
+}
+
+.hero-eye {
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  opacity: 0.75;
+  margin-bottom: 5px;
+}
+
+.hero h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.hero p {
+  font-size: 0.8rem;
+  opacity: 0.88;
+  line-height: 1.55;
+}
+
+.vlucht-strip {
+  margin: 12px 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(30,18,8,0.07);
+}
+
+.vlucht-rij {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  background: var(--lava2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.vlucht-rij:last-child { border-bottom: none; }
+
+.vlucht-ico { font-size: 1.1rem; flex-shrink: 0; }
+.vlucht-info { flex: 1; }
+
+.vlucht-num {
+  font-size: 0.67rem;
+  color: var(--sun);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.vlucht-route {
+  font-size: 0.88rem;
+  color: var(--sand);
+  font-weight: 600;
+}
+
+.vlucht-tijd {
+  font-size: 0.75rem;
+  color: rgba(240,232,213,0.6);
+  margin-top: 1px;
+}
+
+.card {
+  margin: 10px 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(30,18,8,0.06);
+}
+
+.card-hdr {
+  background: var(--lava);
+  color: var(--sand);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-hdr-titel {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.card-hdr-datum {
+  font-size: 0.68rem;
+  color: var(--sun);
+}
+
+.card-body { padding: 14px 16px; }
+
+.tb {
+  display: flex;
+  gap: 13px;
+  padding-bottom: 13px;
+  margin-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+}
+.tb:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.tb-tijd {
+  min-width: 50px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: var(--terra);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+.tb-wat strong {
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 3px;
+  color: var(--lava);
+}
+
+.tb-wat p {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.btn-map {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  background: var(--sea);
+  color: white;
+  text-decoration: none;
+  padding: 6px 13px;
+  border-radius: 16px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+.btn-map svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+.park {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #EAF4EE;
+  color: #1E6E3A;
+  border-radius: 14px;
+  padding: 3px 9px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+.notitie-blok {
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--line);
+  background: #FDFBF7;
+}
+
+.notitie-lbl {
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+textarea.notitie {
+  width: 100%;
+  min-height: 72px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--lava);
+  resize: vertical;
+  background: white;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+textarea.notitie:focus { outline: none; border-color: var(--terra); }
+textarea.notitie::placeholder { color: #BDB5AC; }
+
+.ov-card {
+  margin: 10px 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(30,18,8,0.06);
+}
+
+.ov-hdr {
+  background: var(--sea);
+  color: white;
+  padding: 12px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ov-body { padding: 10px 16px; }
+
+.ov-rij {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: flex-start;
+}
+.ov-rij:last-child { border-bottom: none; }
+
+.ov-dag { font-weight: 600; font-size: 0.78rem; min-width: 74px; }
+.ov-txt { font-size: 0.78rem; color: var(--muted); flex: 1; line-height: 1.4; }
+
+.badge {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.b-hotel { background: #EBF3FA; color: var(--sea); }
+.b-eiland { background: #FEF0E8; color: var(--terra); }
+.b-buurt { background: #EDF7EF; color: #2A7A3C; }
+
+.tipbox {
+  margin: 10px 14px;
+  background: #FFF8EC;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--sun);
+}
+
+.tipbox h3 {
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #8A6A18;
+  margin-bottom: 9px;
+}
+
+.tip {
+  display: flex;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--lava);
+  line-height: 1.5;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(212,168,48,0.18);
+}
+.tip:last-child { border-bottom: none; }
+.tip-i { flex-shrink: 0; }
+
+.hotelbox {
+  margin: 10px 14px;
+  background: var(--lava);
+  border-radius: 12px;
+  padding: 18px 16px;
+  color: var(--sand);
+}
+
+.hotelbox h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--sun);
+  margin-bottom: 12px;
+}
+
+.hotel-rij {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.hotel-rij .i { flex-shrink: 0; }
+
+.bev-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.bev-item:last-child { border-bottom: none; }
+.bev-item a {
+  flex: 1;
+  color: var(--sea);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bev-item a:before { content: "📎 "; }
+.bev-del {
+  color: var(--terra);
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bev-add-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.bev-add-row input {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  padding: 8px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--lava);
+}
+.bev-add-row input.bev-naam { flex: 1; }
+.bev-add-row input.bev-url { flex: 2; }
+.bev-add-row button {
+  background: var(--terra);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bev-hint {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.ritme-card {
+  margin: 10px 14px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.ritme-hdr {
+  background: linear-gradient(135deg, var(--sun), #B08420);
+  color: var(--lava);
+  padding: 12px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ritme-body { padding: 12px 16px; }
+
+.ritme-rij {
+  display: flex;
+  gap: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ritme-rij:last-child { border-bottom: none; }
+
+.ritme-t { font-size: 0.72rem; font-weight: 600; color: var(--terra); min-width: 70px; }
+.ritme-a { font-size: 0.8rem; color: var(--lava); line-height: 1.4; }
+
+.verslag-hdr {
+  background: linear-gradient(135deg, #4A2A6A, #2A1040);
+  padding: 22px 18px 18px;
+  color: white;
+}
+
+.verslag-dag-blok {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.verslag-dag-blok:last-child { border-bottom: none; }
+
+.verslag-dag-titel {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--terra);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.verslag-dag-datum {
+  font-size: 0.67rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.verslag-dag-tekst {
+  font-size: 0.8rem;
+  color: var(--lava);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-style: italic;
+}
+
+.verslag-leeg {
+  font-size: 0.78rem;
+  color: #C5BDB5;
+  font-style: italic;
+}
+
+.btn-verslag {
+  display: block;
+  margin: 14px 14px 4px;
+  background: var(--terra);
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  width: calc(100% - 28px);
+}
+
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--lava);
+  color: var(--sand);
+  padding: 9px 18px;
+  border-radius: 18px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  white-space: nowrap;
+}
+.toast.zicht { opacity: 1; }
+
+.edit-i{color:var(--terra);cursor:pointer;font-size:.85rem;margin-left:6px;font-weight:700}
+.add-blok2{display:block;width:100%;margin-top:6px;background:#F5F0EA;color:var(--muted);border:1.5px dashed var(--line);border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer}
+.del-i{color:#a13d2b;cursor:pointer;font-size:.68rem;font-weight:600;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<div class="board">
-  <div class="board-eyebrow">Danny &amp; Martine · Canarische Eilanden</div>
-  <h1 id="t-name">Lanzarote</h1>
-  <div class="dest-edit" id="t-dest" onclick="editDestination()">Playa Blanca, Lanzarote ✎</div>
-  <div class="dates-edit" id="t-dates" onclick="toggleDateBox()">📅 — <span class="edit-hint">✎</span></div>
-  <div id="dateBox" style="display:none; margin-top:10px; gap:8px; flex-wrap:wrap;">
-    <input type="date" id="startDateInput">
-    <input type="date" id="endDateInput">
-    <button class="btn" onclick="saveDates()">opslaan</button>
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-title">🌋 Lanzarote 2027</div>
+      <div class="hdr-sub">Danny &amp; Martine • 2 – 12 januari</div>
+    </div>
+    <button class="btn-deel" onclick="deel()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Delen
+    </button>
   </div>
-  <div class="status-picker" id="statusPicker"></div>
+  <div class="tabs">
+    <button class="tab on"  onclick="go('overzicht',this)">Overzicht</button>
+    <button class="tab"     onclick="go('hotel',this)">Hotel</button>
+    <button class="tab"     onclick="go('fase1',this)">Fase 1</button>
+    <button class="tab"     onclick="go('fase2',this)">Fase 2</button>
+    <button class="tab"     onclick="go('fase3',this)">Fase 3</button>
+    <button class="tab"     onclick="go('verslag',this)">📖 Verslag</button>
+    <button class="tab"     onclick="go('bud',this)">💰 Budget</button>
+  </div>
 </div>
 
-<main>
+<!-- OVERZICHT -->
+<div id="p-overzicht" class="page on">
 
-  <section style="margin-top:36px;">
-    <div class="sec-eyebrow">Transport</div>
-    <h2>Heen &amp; terug</h2>
-    <div id="transportList"></div>
-    <div class="inline-add">
-      <input type="text" id="newTransportName" placeholder="Vervoer (bv. Transavia BRU-ALC)">
-      <input type="text" id="newTransportTime" placeholder="Tijdstip">
-      <input type="text" id="newTransportPrice" placeholder="€">
-      <input type="text" id="newTransportUrl" placeholder="Link">
-      <button class="btn" onclick="addTransport()">+ heen</button>
-      <button class="btn" onclick="addTransport('terug')">+ terug</button>
+  <div class="hero">
+    <div class="hero-eye">10 dagen • Lanzarote</div>
+    <h2>Jullie plan in één oogopslag</h2>
+    <p>Rustig aankomen, het eiland verkennen op eigen tempo, dan volop genieten van hotel en zon.</p>
+  </div>
+
+  <div class="vlucht-strip" id="vlucht-strip"></div>
+
+  <div class="ov-card">
+    <div class="ov-hdr">📅 Dagplanning</div>
+    <div class="ov-body">
+      <div class="ov-rij"><div class="ov-dag">Za 2 jan</div><div class="ov-txt">Aankomst 17:25 — inchecken, eerste avond</div><div class="badge b-hotel">Aankomst</div></div>
+      <div class="ov-rij"><div class="ov-dag">Zo 3 jan</div><div class="ov-txt">Marina Rubicón — boetieks, terrasje</div><div class="badge b-buurt">Omgeving</div></div>
+      <div class="ov-rij"><div class="ov-dag">Ma 4 jan</div><div class="ov-txt">Playa Blanca centrum — boulevard, winkels</div><div class="badge b-buurt">Omgeving</div></div>
+      <div class="ov-rij"><div class="ov-dag">Di 5 jan</div><div class="ov-txt">Playa Papagayo — stranden vlakbij</div><div class="badge b-buurt">Strand</div></div>
+      <div class="ov-rij"><div class="ov-dag">Wo 6 jan</div><div class="ov-txt">El Golfo &amp; Los Hervideros — westkust</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Do 7 jan</div><div class="ov-txt">Timanfaya Nationaal Park &amp; La Geria</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Vr 8 jan</div><div class="ov-txt">Mirador del Río &amp; Jameos del Agua</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Za 9 jan</div><div class="ov-txt">Arrecife — hoofdstad, haven, markt</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Zo 10 jan</div><div class="ov-txt">Vrije dag — hotel &amp; zwembad</div><div class="badge b-hotel">Hotel</div></div>
+      <div class="ov-rij"><div class="ov-dag">Ma 11 jan</div><div class="ov-txt">Vrije dag — laatste genieten</div><div class="badge b-hotel">Hotel</div></div>
+      <div class="ov-rij"><div class="ov-dag">Di 12 jan</div><div class="ov-txt">Vertrek — SN3788 om 18:15</div><div class="badge b-hotel">Vertrek</div></div>
     </div>
-  </section>
+  </div>
 
-  <section>
-    <div class="sec-eyebrow">Verblijf</div>
-    <h2>Hotel</h2>
-    <div id="hotelList"></div>
-    <div class="inline-add">
-      <input type="text" id="newHotelName" placeholder="Naam hotel">
-      <input type="text" id="newHotelUrl" placeholder="Link">
-      <input type="text" id="newHotelPrice" placeholder="€ totaal">
-      <button class="btn" onclick="addHotel()">+</button>
+  <div class="tipbox">
+    <h3>✈️ Praktisch</h3>
+    <div class="tip"><span class="tip-i">🚗</span><span>Auto ophalen bij ACE na landing 17:25. Rijden naar hotel ±40 min via LZ-2.</span></div>
+    <div class="tip"><span class="tip-i">⏰</span><span>Jullie regel: altijd voor 15u terug in hotel voor snack en winterzon.</span></div>
+    <div class="tip"><span class="tip-i">📖</span><span>Noteer elke dag jullie belevenissen in het tabblad van die fase — alles komt samen in het Verslag.</span></div>
+    <div class="tip"><span class="tip-i">🗺️</span><span>Download offline kaart van Lanzarote in Google Maps vóór vertrek.</span></div>
+    <div class="tip"><span class="tip-i">🎟️</span><span>Boek Timanfaya tickets op voorhand via de website van Cabildo de Lanzarote.</span></div>
+  </div>
+</div>
+
+<!-- HOTEL -->
+<div id="p-hotel" class="page">
+
+  <div class="hero" style="background: linear-gradient(135deg, var(--sea) 0%, #1A3E52 100%);">
+    <div class="hero-eye">Jullie basis</div>
+    <h2>Hotel &amp; dagritme</h2>
+    <p>Privilege All Inclusive — alles geregeld, geen beslissomoeheid.</p>
+  </div>
+
+  <div class="hotelbox">
+    <h3>Hotel <span class="edit-i" onclick="editHotel()">✎</span></h3>
+    <div id="hotel-detail"></div>
+    <a class="btn-map" style="margin-top:10px;" id="hotel-mapslink" href="#" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      Bekijk op Maps
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">📎 Bevestigingen</div><div class="card-hdr-datum">Vluchten, transfer, tickets...</div></div>
+    <div class="card-body">
+      <div id="bev-lijst"></div>
+      <div class="bev-add-row">
+        <input type="text" class="bev-naam" id="bev-naam" placeholder="Naam (bv. vluchtticket SN3787)">
+        <label style="background:var(--terra); color:white; border:none; border-radius:8px; padding:0 14px; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; white-space:nowrap;">📷 Kies bestand<input type="file" accept="image/*,application/pdf" id="bev-file" style="display:none;" onchange="handleBevestigingFile()"></label>
+      </div>
+      <div class="bev-add-row">
+        <input type="text" class="bev-url" id="bev-url" placeholder="Of plak zelf een link (Google Drive...)">
+        <button onclick="voegBevestigingToe()">+</button>
+      </div>
+      <div class="bev-hint" id="bev-status">Kies een foto (wordt automatisch gecomprimeerd), of plak zelf een link.</div>
     </div>
-  </section>
+  </div>
 
-  <section>
-    <div class="sec-eyebrow">Dag per dag</div>
-    <h2>Dagindeling</h2>
-    <div id="dayTree"></div>
-  </section>
-
-  <section>
-    <div class="sec-eyebrow">Overzicht</div>
-    <h2>Kostprijs</h2>
-    <div id="costBreakdown"></div>
-  </section>
-
-  <section>
-    <div class="sec-eyebrow">Onderweg bij de hand</div>
-    <h2>Bevestigingen</h2>
-    <div style="font-size:12.5px; color:rgba(237,228,211,0.6); margin-bottom:10px;">Vluchttickets, hotelvoucher, reisverzekering... foto's worden gecomprimeerd opgeslagen, zodat je alles offline-achtig bij de hand hebt tijdens de reis.</div>
-    <div id="confirmationsList"></div>
-    <div class="inline-add">
-      <input type="text" id="newConfirmName" placeholder="Naam (bv. vluchtticket)">
-      <label class="btn file-btn">📷 Kies bestand<input type="file" accept="image/*,application/pdf" id="newConfirmFile" onchange="handleConfirmationFile()"></label>
+  <div class="ritme-card">
+    <div class="ritme-hdr">☀️ Jullie ideale dagritme</div>
+    <div class="ritme-body">
+      <div class="ritme-rij"><div class="ritme-t">08:30–10:00</div><div class="ritme-a">Uitgebreid Privilege ontbijt</div></div>
+      <div class="ritme-rij"><div class="ritme-t">10:00–13:00</div><div class="ritme-a">Voormiddag — winkels, uitstap of eilandverkenning</div></div>
+      <div class="ritme-rij"><div class="ritme-t">13:00–14:00</div><div class="ritme-a">Lunch onderweg of terug in hotel</div></div>
+      <div class="ritme-rij"><div class="ritme-t">14:00–15:30</div><div class="ritme-a">Aankomst hotel — snack bij zwembad</div></div>
+      <div class="ritme-rij"><div class="ritme-t">15:30–18:00</div><div class="ritme-a">Zwembad — liggen, lezen, winterzon</div></div>
+      <div class="ritme-rij"><div class="ritme-t">18:00–19:00</div><div class="ritme-a">Aperitief — Privilege lounge of bistro bar</div></div>
+      <div class="ritme-rij"><div class="ritme-t">19:30–21:30</div><div class="ritme-a">Avondmaal — buffet of à la carte</div></div>
+      <div class="ritme-rij"><div class="ritme-t">21:30–23:00</div><div class="ritme-a">Afsluiter — avondshow, live muziek, cocktail</div></div>
     </div>
-    <div class="inline-add">
-      <input type="text" id="newConfirmUrl" placeholder="Of plak een link (Google Drive...)">
-      <button class="btn" onclick="addConfirmationLink()">+</button>
+  </div>
+
+  <div class="tipbox">
+    <h3>💡 Privilege tips</h3>
+    <div class="tip"><span class="tip-i">📋</span><span>Bij check-in meteen à la carte reserveringen maken voor de hele week — vol geraken gaat snel.</span></div>
+    <div class="tip"><span class="tip-i">🛏️</span><span>Kussenmenu aanvragen bij check-in — groot verschil in slaapcomfort.</span></div>
+    <div class="tip"><span class="tip-i">🍹</span><span>Premium dranken inbegrepen — geen verrassingen op de rekening.</span></div>
+    <div class="tip"><span class="tip-i">🌙</span><span>Turndown service met kleine attentie elke avond — typisch Privilege touch.</span></div>
+  </div>
+</div>
+
+<!-- FASE 1 -->
+<div id="p-fase1" class="page">
+  <div class="hero" style="background: linear-gradient(135deg, #2A7A3A 0%, #1A5228 100%);">
+    <div class="hero-eye">Dag 1 t/m 4 • 2 – 5 januari</div>
+    <h2>Fase 1 — Aankomen &amp; omgeving</h2>
+    <p>Rustig settelen. Voormiddagen buiten, rest volledig hotel.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 1 — Aankomst</div><div class="card-hdr-datum">Za 2 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag1"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag1')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag1" placeholder="Hoe was de aankomst? Eerste indruk hotel? Wat viel op?" oninput="bewaar('dag1',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 2 — Marina Rubicón</div><div class="card-hdr-datum">Zo 3 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag2"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag2')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag2" placeholder="Wat zagen jullie aan de marina? Leuke winkeltjes? Goed terrasje?" oninput="bewaar('dag2',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 3 — Playa Blanca centrum</div><div class="card-hdr-datum">Ma 4 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag3"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag3')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag3" placeholder="Hoe was de boulevard? Wat kochten jullie? Goed koffietje ergens?" oninput="bewaar('dag3',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 4 — Playa Papagayo</div><div class="card-hdr-datum">Di 5 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag4"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag4')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag4" placeholder="Welk strand was het mooist? Hoe was het water? Veel mensen?" oninput="bewaar('dag4',this.value)"></textarea></div>
+  </div>
+</div>
+
+<!-- FASE 2 -->
+<div id="p-fase2" class="page">
+  <div class="hero">
+    <div class="hero-eye">Dag 5 t/m 8 • 6 – 9 januari</div>
+    <h2>Fase 2 — Het eiland verkennen</h2>
+    <p>Vier rustige voormiddagen met de auto. Telkens voor 15u terug. Geen stress, geen haast.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 5 — El Golfo &amp; westkust</div><div class="card-hdr-datum">Wo 6 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag5"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag5')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag5" placeholder="Hoe zag die groene lagune eruit? Indrukwekkend? De kleuren?" oninput="bewaar('dag5',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 6 — Timanfaya &amp; La Geria</div><div class="card-hdr-datum">Do 7 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag6"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag6')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag6" placeholder="Timanfaya — wat maakte indruk? La Geria — wijn geproefd?" oninput="bewaar('dag6',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 7 — Mirador del Río &amp; Jameos</div><div class="card-hdr-datum">Vr 8 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag7"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag7')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag7" placeholder="Mirador del Río — La Graciosa zichtbaar? Jameos — de grot, de krabben?" oninput="bewaar('dag7',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 8 — Arrecife</div><div class="card-hdr-datum">Za 9 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag8"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag8')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag8" placeholder="Arrecife — hoe was de sfeer? De markt?" oninput="bewaar('dag8',this.value)"></textarea></div>
+  </div>
+</div>
+
+<!-- FASE 3 -->
+<div id="p-fase3" class="page">
+  <div class="hero" style="background: linear-gradient(135deg, var(--sea) 0%, #1A3E52 100%);">
+    <div class="hero-eye">Dag 9 &amp; 10 • 10 – 11 januari</div>
+    <h2>Fase 3 — Pure ontspanning</h2>
+    <p>Niets moeten. Zwembad, zon, aperitief, goed eten.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 9 &amp; 10 — Vrije dagen</div><div class="card-hdr-datum">Zo 10 &amp; Ma 11 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag9"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag9')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok">
+      <div class="notitie-lbl">✏️ Zondag 10 jan</div>
+      <textarea class="notitie" id="n-dag9" placeholder="Hoe was de rustdag? Blue Moon restaurant?" oninput="bewaar('dag9',this.value)"></textarea>
+      <div class="notitie-lbl" style="margin-top:10px;">✏️ Maandag 11 jan</div>
+      <textarea class="notitie" id="n-dag10" placeholder="Laatste volledige dag. Wat voelen jullie?" oninput="bewaar('dag10',this.value)"></textarea>
     </div>
-    <div id="confirmStatus" style="font-size:11px; color:rgba(237,228,211,0.5); margin-top:6px; font-family:'IBM Plex Mono',monospace;"></div>
-  </section>
+  </div>
 
-  <section>
-    <div class="sec-eyebrow">Checklist</div>
-    <h2>Nog te doen</h2>
-    <div id="checklist"></div>
-    <div class="inline-add">
-      <input type="text" id="newCheck" placeholder="Nieuwe actie…">
-      <button class="btn" onclick="addCheck()">+</button>
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 11 — Vertrek</div><div class="card-hdr-datum">Di 12 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag11"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag11')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Laatste gedachten</div><textarea class="notitie" id="n-dag11" placeholder="Wat nemen jullie mee van deze reis? Mooiste moment?" oninput="bewaar('dag11',this.value)"></textarea></div>
+  </div>
+</div>
+
+<!-- VERSLAG -->
+<div id="p-verslag" class="page">
+  <div class="verslag-hdr">
+    <div class="hero-eye">Herinneringen</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:white;font-weight:600;margin-bottom:5px;">📖 Ons reisverslag</h2>
+    <p style="font-size:0.8rem;opacity:0.85;line-height:1.5;">Alles wat jullie noteerden, samengebracht als blijvende herinnering.</p>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-hdr" style="background:#4A2A6A;">
+      <div class="card-hdr-titel">Danny &amp; Martine — Lanzarote 2027</div>
+      <div class="card-hdr-datum">2 – 12 januari</div>
     </div>
-  </section>
+    <div id="verslag-inhoud" class="card-body"></div>
+  </div>
+  <button class="btn-verslag" onclick="kopieer()">📋 Kopieer verslag als tekst</button>
+  <div class="tipbox" style="margin-top:4px;">
+    <h3>💡 Over dit verslag</h3>
+    <div class="tip"><span class="tip-i">✍️</span><span>Noteer elke dag iets — ook kleine dingen zijn later het meest waardevol.</span></div>
+    <div class="tip"><span class="tip-i">📤</span><span>Kopieer de tekst en plak ze in een mail of WhatsApp naar kinderen of vrienden.</span></div>
+  </div>
+</div>
 
-  <section>
-    <div class="sec-eyebrow">Suggesties</div>
-    <h2>Extra ideeën</h2>
-    <div id="notesList"></div>
-    <div class="inline-add">
-      <input type="text" id="newNote" placeholder="Nieuw idee of notitie…">
-      <button class="btn" onclick="addNote()">+</button>
+<!-- BUDGET -->
+<div id="p-bud" class="page">
+  <div class="hero" style="background:linear-gradient(135deg,#2A7A3A 0%,#1A5228 100%)">
+    <div class="hero-eye">Kostenoverzicht</div>
+    <h2>💰 Budget Lanzarote 2027</h2>
+    <p>Vul jullie werkelijke kosten in tijdens de reis — het totaal wordt automatisch berekend.</p>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Totaal overzicht</div><div class="card-hdr-datum">Automatisch berekend</div></div>
+    <div class="card-body">
+      <div class="tb"><div class="tb-tijd" style="color:var(--muted)">Vast</div><div class="tb-wat"><strong style="font-size:.88rem">Vluchten + hotel (All Inclusive)</strong></div><div style="font-size:1rem;font-weight:700;color:var(--sea);min-width:80px;text-align:right" id="tot-vast">€ —</div></div>
+      <div class="tb"><div class="tb-tijd" style="color:var(--muted)">Ter plaatse</div><div class="tb-wat"><strong style="font-size:.88rem">Huurwagen + uitstappen + eten buiten hotel + shopping + diversen</strong></div><div style="font-size:1rem;font-weight:700;color:var(--sea);min-width:80px;text-align:right" id="tot-ter">€ —</div></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--sea);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--sea)">TOTAAL REIS</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600" id="tot-alles">€ —</div>
+      </div>
+      <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:.78rem;color:var(--muted)">Per persoon</div>
+        <div style="font-size:1rem;font-weight:600;color:var(--muted)" id="tot-pp">€ —</div>
+      </div>
     </div>
-  </section>
-
-  <section>
-    <div class="card">
-      <a href="https://desmetdanny-ui.github.io/" class="backlink">← terug naar Reisatlas</a>
+  </div>
+  <div class="card">
+    <div class="card-hdr" style="background:#1A5228"><div class="card-hdr-titel">Vaste kosten — al geboekt</div><div class="card-hdr-datum">Gekende bedragen</div></div>
+    <div class="card-body">
+      <div class="tb"><div class="tb-wat"><strong>SN3787 + SN3788 — Brussel ↔ Lanzarote</strong><p>2 personen retour</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-vluchten" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Hotel — 10 nachten</strong><p>Privilege All Inclusive, 2 personen</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-hotel" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
     </div>
-  </section>
+  </div>
+  <div class="card">
+    <div class="card-hdr" style="background:#1A5228"><div class="card-hdr-titel">Ter plaatse</div><div class="card-hdr-datum">Vul aan tijdens de reis</div></div>
+    <div class="card-body">
+      <div class="tb"><div class="tb-wat"><strong>Huurwagen</strong><p>Volledige huurperiode</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-auto" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Uitstappen &amp; tickets</strong><p>Timanfaya, Jameos, Mirador del Río, ...</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-uitstap" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Eten &amp; drinken buiten het hotel</strong><p>Restaurants, terrasjes</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-eten" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Shopping</strong><p>Souvenirs, wijn uit La Geria, ...</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-shop" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Diversen</strong><p>Parking, fooien, kleine uitgaven</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-div" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+    </div>
+  </div>
+</div>
 
-</main>
+<div class="toast" id="toast"></div>
 
-<div class="sync-status"><span class="dot" id="syncDot"></span><span id="syncText">verbinden…</span></div>
-
-<script>
-const TRIP_ID = 'lanzarote-2027';
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC399MvSiF3PWF_ZTdFr0UqaoC6Fo7WsrY",
@@ -205,281 +880,388 @@ const firebaseConfig = {
   projectId: "wiezen-club",
   storageBucket: "wiezen-club.firebasestorage.app",
   messagingSenderId: "184449254432",
-  appId: "1:184449254432:web:e4f4f93acae57a9a736845",
-  measurementId: "G-94G6872QG4"
+  appId: "1:184449254432:web:e4f4f93acae57a9a736845"
 };
-let db=null, storage=null, ok=false;
-try{ firebase.initializeApp(firebaseConfig); db=firebase.firestore(); storage=firebase.storage(); ok=true; }catch(e){ console.error(e); }
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const storage = getStorage(fbApp);
+const guideDocRef = doc(db, 'guides', 'lanzarote2027');
 
-let trip = {};
-function setSync(good, text){ document.getElementById('syncDot').className='dot'+(good?'':' off'); document.getElementById('syncText').textContent=text; }
-
-const STATUSES=[{key:"idee",label:"💭 Idee"},{key:"planning",label:"📋 Planning"},{key:"bevestigd",label:"✅ Bevestigd"},{key:"onderweg",label:"✈️ Onderweg"},{key:"afgerond",label:"📖 Afgerond"}];
-
-async function load(){
-  if(!ok){ setSync(false,'geen verbinding'); return; }
-  try{
-    const doc = await db.collection('trips').doc(TRIP_ID).get();
-    trip = doc.exists ? doc.data() : {
-      name:'Lanzarote',
-      destination:'Playa Blanca, Lanzarote',
-      status:'bevestigd',
-      startDate:'2027-01-02',
-      endDate:'2027-01-12',
-      notes:["Privilege All Inclusive"],
-      checklist:[],
-      budget:[],
-      hotels:[{name:'H10 Rubicón Horizons Collection', url:'', price:''}],
-      transport:[
-        {direction:'heen', name:'Vlucht SN3787', time:'', price:'', url:''},
-        {direction:'terug', name:'Vlucht SN3788', time:'', price:'', url:''}
-      ],
-      restaurantPlan:{},
-      dayActivities:{},
-      confirmations:[]
-    };
-    setSync(true,'gesynct');
-    renderAll();
-  }catch(e){ console.error(e); setSync(false,'fout bij laden'); }
-}
-async function save(){ await db.collection('trips').doc(TRIP_ID).set(trip); }
-
-function renderAll(){
-  document.getElementById('t-name').textContent = trip.name || 'Alicante';
-  document.getElementById('t-dest').innerHTML = (trip.destination||'—') + ' <span class="edit-hint">✎</span>';
-  document.getElementById('t-dates').innerHTML = '📅 ' + (fmtRange(trip.startDate, trip.endDate) || 'nog geen data') + ' <span class="edit-hint">✎</span>';
-  document.getElementById('startDateInput').value = trip.startDate||'';
-  document.getElementById('endDateInput').value = trip.endDate||'';
-
-  document.getElementById('statusPicker').innerHTML = STATUSES.map(s=>`<button class="${s.key===trip.status?'active':''}" onclick="setStatus('${s.key}')">${s.label}</button>`).join('');
-
-  renderTransport(); renderHotels(); renderDayTree(); renderCost(); renderConfirmations(); renderChecklist(); renderNotes();
-}
-
-function fmtDate(iso){ try{ return new Date(iso+'T12:00:00').toLocaleDateString('nl-BE',{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return iso; } }
-function fmtRange(s,e){ if(!s&&!e) return ''; const f=(iso)=>{try{return new Date(iso+'T12:00:00').toLocaleDateString('nl-BE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}catch(x){return iso;}}; return s&&e?`${f(s)} → ${f(e)}`:f(s||e); }
-function num(v){ const n=parseFloat(String(v||'').replace(',','.')); return isNaN(n)?0:n; }
-function linkify(t){ if(!t) return ''; return t.replace(/(https?:\/\/[^\s·]+)/g,'<a href="$1" target="_blank">$1</a>'); }
-
-function setStatus(k){ trip.status=k; save(); renderAll(); }
-function editDestination(){ const v=prompt('Bestemming:', trip.destination||''); if(v===null) return; trip.destination=v.trim(); save(); renderAll(); }
-function toggleDateBox(){ const box=document.getElementById('dateBox'); box.style.display = box.style.display==='none'?'flex':'none'; }
-function saveDates(){ trip.startDate=document.getElementById('startDateInput').value; trip.endDate=document.getElementById('endDateInput').value; syncDays(); document.getElementById('dateBox').style.display='none'; save(); renderAll(); }
-
-/* Transport */
-function renderTransport(){
-  document.getElementById('transportList').innerHTML = (trip.transport||[]).map((tr,i)=>`
-    <div class="card row">
-      <div><a href="${tr.url||'#'}" target="_blank">${tr.direction==='terug'?'🛬':'🛫'} ${tr.direction==='terug'?'Terug':'Heen'} — ${tr.name}${tr.time?' · '+tr.time:''}</a>
-      ${tr.price?`<div class="meta">€ ${tr.price}</div>`:''}</div>
-      <div><span class="icon-btn" onclick="editTransport(${i})">✎</span> <span class="icon-btn del" onclick="delTransport(${i})">✕</span></div>
-    </div>`).join('') || '<div class="empty">Nog geen transport</div>';
-}
-function addTransport(dir){
-  const n=document.getElementById('newTransportName'), t=document.getElementById('newTransportTime'), p=document.getElementById('newTransportPrice'), u=document.getElementById('newTransportUrl');
-  if(!n.value.trim()) return;
-  trip.transport = trip.transport||[];
-  trip.transport.push({direction: dir||'heen', name:n.value.trim(), time:t.value.trim(), price:p.value.trim(), url:u.value.trim()});
-  n.value=''; t.value=''; p.value=''; u.value='';
-  save(); renderAll();
-}
-function editTransport(i){
-  const tr=trip.transport[i];
-  const name=prompt('Vervoer:', tr.name); if(name===null) return;
-  const time=prompt('Tijdstip:', tr.time||''); if(time===null) return;
-  const price=prompt('Prijs (€):', tr.price||''); if(price===null) return;
-  const url=prompt('Link:', tr.url||''); if(url===null) return;
-  trip.transport[i]={...tr, name:name.trim(), time:time.trim(), price:price.trim(), url:url.trim()};
-  save(); renderAll();
-}
-function delTransport(i){ if(!confirm('Verwijderen?')) return; trip.transport.splice(i,1); save(); renderAll(); }
-
-/* Hotel */
-function renderHotels(){
-  document.getElementById('hotelList').innerHTML = (trip.hotels||[]).map((h,i)=>`
-    <div class="card row">
-      <div><a href="${h.url}" target="_blank">🏨 ${h.name}</a>${h.price?`<div class="meta">€ ${h.price}</div>`:''}</div>
-      <div><span class="icon-btn" onclick="editHotel(${i})">✎</span> <span class="icon-btn del" onclick="delHotel(${i})">✕</span></div>
-    </div>`).join('') || '<div class="empty">Nog geen hotel</div>';
-}
-function addHotel(){
-  const n=document.getElementById('newHotelName'), u=document.getElementById('newHotelUrl'), p=document.getElementById('newHotelPrice');
-  if(!n.value.trim()) return;
-  trip.hotels=trip.hotels||[];
-  trip.hotels.push({name:n.value.trim(), url:u.value.trim(), price:p.value.trim()});
-  n.value=''; u.value=''; p.value='';
-  save(); renderAll();
-}
-function editHotel(i){
-  const h=trip.hotels[i];
-  const name=prompt('Naam:', h.name); if(name===null) return;
-  const url=prompt('Link:', h.url); if(url===null) return;
-  const price=prompt('Prijs (€):', h.price||''); if(price===null) return;
-  trip.hotels[i]={name:name.trim(), url:url.trim(), price:price.trim()};
-  save(); renderAll();
-}
-function delHotel(i){ if(!confirm('Verwijderen?')) return; trip.hotels.splice(i,1); save(); renderAll(); }
-
-/* Dagindeling */
-let openDays={};
-function syncDays(){
-  trip.restaurantPlan = trip.restaurantPlan||{};
-  trip.dayActivities = trip.dayActivities||{};
-  if(!trip.startDate||!trip.endDate) return;
-  let cur=new Date(trip.startDate+'T12:00:00'); const end=new Date(trip.endDate+'T12:00:00');
-  if(isNaN(cur)||isNaN(end)) return;
-  while(cur<=end){
-    const iso=cur.toISOString().slice(0,10);
-    if(!trip.restaurantPlan[iso]) trip.restaurantPlan[iso]={lunch:{name:'',price:'',url:'',menuUrl:'',rating:'',review:''}, dinner:{name:'',price:'',url:'',menuUrl:'',rating:'',review:''}};
-    cur.setDate(cur.getDate()+1);
-  }
-}
-function toggleDay(iso){ openDays[iso]=!openDays[iso]; renderDayTree(); }
-function renderDayTree(){
-  syncDays();
-  const dates=Object.keys(trip.restaurantPlan||{}).sort();
-  const el=document.getElementById('dayTree');
-  if(!dates.length){ el.innerHTML='<div class="empty">Vul eerst data in bovenaan</div>'; return; }
-  el.innerHTML = dates.map(iso=>{
-    const day=trip.restaurantPlan[iso]||{lunch:{},dinner:{}};
-    const activity=(trip.dayActivities||{})[iso]||'';
-    const isOpen=!!openDays[iso];
-    const sum=[]; if(activity) sum.push('📍'); if(day.lunch&&day.lunch.name) sum.push('🍽️'); if(day.dinner&&day.dinner.name) sum.push('🌙');
-    const meal=(m2,label)=>{
-      const m=day[m2]||{};
-      const body=m.name?`${m.url?`<a href="${m.url}" target="_blank">${m.name}</a>`:m.name}`:`<span class="meal-empty">nog niet gekozen</span>`;
-      const extra=[]; if(m.menuUrl) extra.push(`<a href="${m.menuUrl}" target="_blank">📋 menu</a>`); if(m.rating) extra.push(`<span class="meal-price">⭐ ${m.rating}/10</span>`);
-      return `<div class="day-block-label">${label}</div><div class="meal-row">${body}${m.price?`<span class="meal-price">€ ${m.price}</span>`:''}${extra.join('')}<span class="icon-btn" onclick="editMeal('${iso}','${m2}')">✎</span>${m.review?`<div class="meal-review">"${m.review}"</div>`:''}</div>`;
-    };
-    return `<div class="day-tree">
-      <button class="day-btn ${isOpen?'open':''}" onclick="toggleDay('${iso}')">
-        <div><div class="day-btn-title">${fmtDate(iso)}</div><div class="day-btn-sum">${sum.join(' ')||'nog niets'}</div></div>
-        <span class="chevron">▶</span>
-      </button>
-      <div class="day-content ${isOpen?'open':''}">
-        <div class="day-block-label">Wat doen we vandaag</div>
-        <div class="activity-box ${activity?'':'empty-txt'}" onclick="editActivity('${iso}')">${activity?linkify(activity):'klik om in te vullen'}</div>
-        ${meal('lunch','Lunch')}
-        ${meal('dinner','Diner')}
-      </div>
-    </div>`;
-  }).join('');
-}
-function editActivity(iso){
-  trip.dayActivities=trip.dayActivities||{};
-  const v=prompt('Wat doen jullie op '+fmtDate(iso)+'?', trip.dayActivities[iso]||''); if(v===null) return;
-  trip.dayActivities[iso]=v.trim(); openDays[iso]=true; save(); renderDayTree();
-}
-function editMeal(iso, m2){
-  trip.restaurantPlan[iso]=trip.restaurantPlan[iso]||{lunch:{},dinner:{}};
-  const m=trip.restaurantPlan[iso][m2]||{};
-  const name=prompt((m2==='lunch'?'Lunch':'Diner')+' — naam:', m.name||''); if(name===null) return;
-  const price=prompt('Prijs (€):', m.price||''); if(price===null) return;
-  const url=prompt('Link website/reservering:', m.url||''); if(url===null) return;
-  const menuUrl=prompt('Link menu:', m.menuUrl||''); if(menuUrl===null) return;
-  const rating=prompt('Beoordeling (0-10):', m.rating||''); if(rating===null) return;
-  const review=prompt('Wat vonden jullie ervan?', m.review||''); if(review===null) return;
-  trip.restaurantPlan[iso][m2]={name:name.trim(),price:price.trim(),url:url.trim(),menuUrl:menuUrl.trim(),rating:rating.trim(),review:review.trim()};
-  save(); renderDayTree(); renderCost();
-}
-
-/* Kostprijs */
-function renderCost(){
-  const hotelT=(trip.hotels||[]).reduce((s,h)=>s+num(h.price),0);
-  const transT=(trip.transport||[]).reduce((s,t)=>s+num(t.price),0);
-  let restT=0; Object.values(trip.restaurantPlan||{}).forEach(d=>{['lunch','dinner'].forEach(m=>{if(d[m]) restT+=num(d[m].price);});});
-  const budT=(trip.budget||[]).reduce((s,b)=>s+num(b.amount),0);
-  const grand=hotelT+transT+restT+budT;
-  const fmt=(n)=>n.toFixed(2).replace('.00','');
-  document.getElementById('costBreakdown').innerHTML = `
-    <div class="cost-row"><span>🏨 Verblijf</span><span class="mono">€ ${fmt(hotelT)}</span></div>
-    <div class="cost-row"><span>✈️ Transport</span><span class="mono">€ ${fmt(transT)}</span></div>
-    <div class="cost-row"><span>🍽️ Restaurants</span><span class="mono">€ ${fmt(restT)}</span></div>
-    <div class="cost-row"><span>📎 Overige</span><span class="mono">€ ${fmt(budT)}</span></div>
-    <div class="cost-row total"><span>Totaal</span><span class="mono">€ ${fmt(grand)}</span></div>`;
-}
-
-/* Bevestigingen */
 function compressImage(file, maxDim, quality){
-  return new Promise((resolve,reject)=>{
-    const img=new Image(); const reader=new FileReader();
-    reader.onload=(e)=>{img.src=e.target.result;}; reader.onerror=reject;
-    img.onload=()=>{
-      let w=img.width,h=img.height;
-      if(w>h&&w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;} else if(h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;}
-      const c=document.createElement('canvas'); c.width=w;c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      c.toBlob(b=>resolve(b),'image/jpeg',quality);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+      else if (h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => resolve(blob), 'image/jpeg', quality);
     };
-    img.onerror=reject; reader.readAsDataURL(file);
+    img.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
-async function uploadConfirmation(file){
-  const isPdf = file.type==='application/pdf' || /\.pdf$/i.test(file.name);
-  if(isPdf){
-    const fn = TRIP_ID+'_'+Date.now()+'.pdf';
-    const ref = storage.ref().child('bevestigingen/'+fn);
-    await ref.put(file,{contentType:'application/pdf'});
-    return await ref.getDownloadURL();
+async function uploadBevestigingFoto(file, pad){
+  const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  if (isPdf){
+    const bestandsnaam = pad + '_' + Date.now() + '.pdf';
+    const ref = storageRef(storage, 'bevestigingen/' + bestandsnaam);
+    await uploadBytes(ref, file, {contentType:'application/pdf'});
+    return await getDownloadURL(ref);
   }
-  let blob=await compressImage(file,1600,0.72);
-  if(blob.size>900000) blob=await compressImage(file,1200,0.55);
-  const fn = TRIP_ID+'_'+Date.now()+'.jpg';
-  const ref = storage.ref().child('bevestigingen/'+fn);
-  await ref.put(blob);
-  return await ref.getDownloadURL();
+  let blob = await compressImage(file, 1600, 0.72);
+  if (blob.size > 900000){ blob = await compressImage(file, 1200, 0.55); }
+  const bestandsnaam = pad + '_' + Date.now() + '.jpg';
+  const ref = storageRef(storage, 'bevestigingen/' + bestandsnaam);
+  await uploadBytes(ref, blob);
+  return await getDownloadURL(ref);
 }
-async function handleConfirmationFile(){
-  const inp=document.getElementById('newConfirmFile'), n=document.getElementById('newConfirmName'), st=document.getElementById('confirmStatus');
-  const file=inp.files&&inp.files[0]; if(!file) return;
-  const name=n.value.trim()||file.name;
-  st.textContent='⏳ bezig met uploaden...';
+
+let guideData = {};
+const saveTimers = {};
+function veldOpslaan(id, value){
+  guideData[id] = value;
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => {
+    setDoc(guideDocRef, { [id]: value }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+  }, 500);
+}
+function veldOpslaanNu(id, value){
+  guideData[id] = value;
+  return setDoc(guideDocRef, { [id]: value }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+}
+
+/* ===== Standaardgegevens ===== */
+const DEFAULT_VLUCHT_HEEN = {maatschappij:'SN 3787', van:'Brussel (BRU)', naar:'Lanzarote (ACE)', datum:'Zaterdag 2 jan', tijd:'Vertrek 14:10 · Aankomst 17:25'};
+const DEFAULT_VLUCHT_TERUG = {maatschappij:'SN 3788', van:'Lanzarote (ACE)', naar:'Brussel (BRU)', datum:'Dinsdag 12 jan', tijd:'Vertrek 18:15 · Aankomst 23:30'};
+const DEFAULT_HOTEL = {naam:'H10 Rubicón Horizons Collection', adres:'Playa Blanca, Yaiza, Lanzarote', kenmerken:'5 sterren · Privilege All Inclusive · Eigen Privilege zwembad met bistro bar · Blue Moon restaurant + meerdere à la carte · Avondanimatie: shows, live muziek, thema-avonden · Taxi naar centrum ±€5, bus €1,50', mapsQuery:'H10 Rubicon Horizons Collection Playa Blanca Lanzarote'};
+
+const DEFAULT_ACTIVITEITEN = {
+  dag1: [
+    {tijd:'17:25', titel:'Landing Lanzarote — SN3787', tekst:'Auto ophalen, rijden naar hotel via LZ-2. ±35 km, 40 minuten. Gratis parkeren bij hotel.', link:'https://maps.google.com/?saddr=Lanzarote+Airport+ACE&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'},
+    {tijd:'Avond', titel:'Inchecken & eerste avond', tekst:'Privilege reserveringen maken voor de week. Eerste aperitief, eerste avondmaal.', link:''}
+  ],
+  dag2: [
+    {tijd:'10:00', titel:'Marina Rubicón — te voet vanuit hotel', tekst:'5 minuten wandelen. Luxe jachthaven, boetieks, terrassen, zondagsmarkt.', link:'https://maps.google.com/?q=Marina+Rubicon+Playa+Blanca+Lanzarote'},
+    {tijd:'13:00', titel:'Terug hotel — lunch & zwembad', tekst:'Eerste namiddag aan het Privilege zwembad.', link:''}
+  ],
+  dag3: [
+    {tijd:'10:00', titel:'Taxi naar Playa Blanca centrum — €5', tekst:'Boulevard, winkels, ijssalon, lokale winkeltjes. Loop richting vuurtoren langs de kust.', link:'https://maps.google.com/?q=Playa+Blanca+boulevard+Lanzarote'},
+    {tijd:'13:00', titel:'Taxi terug — namiddag hotel', tekst:'Privilege lounge voor het avondeten.', link:''}
+  ],
+  dag4: [
+    {tijd:'10:00', titel:'Playa Papagayo — 10 km van hotel', tekst:'Zes stranden in beschermd natuurgebied. Turkoois water, rustig in januari. Toegang ±€3 per auto.', link:'https://maps.google.com/?q=Playa+Papagayo+Lanzarote'},
+    {tijd:'13:00', titel:'Terug hotel', tekst:'Morgen start de eilandverkenning.', link:''}
+  ],
+  dag5: [
+    {tijd:'09:30', titel:'El Golfo — groene lagune', tekst:'±35 km, 40 min. Felgroene lagune Charco de los Clicos in een vulkaankrater. Zwarte lava, turquoise water.', link:'https://maps.google.com/?q=Charco+de+los+Clicos+El+Golfo+Lanzarote'},
+    {tijd:'11:00', titel:'Los Hervideros — kookpotten', tekst:'5 km verder. Zeewater spuit door gaten in lava omhoog.', link:'https://maps.google.com/?q=Los+Hervideros+Lanzarote'},
+    {tijd:'13:00', titel:'Terug hotel — voor 15u', tekst:'', link:'https://maps.google.com/?saddr=Los+Hervideros+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
+  ],
+  dag6: [
+    {tijd:'09:30', titel:'Timanfaya Nationaal Park', tekst:'Zwarte lavavlakten, vulkaankraters — maanlandschap. Rondrit met parkbus inbegrepen. Entree ±€13 p.p.', link:'https://maps.google.com/?q=Parque+Nacional+de+Timanfaya+Lanzarote'},
+    {tijd:'11:30', titel:'La Geria — wijnstreek', tekst:'20 min rijden. Wijnranken in zwarte lavatrechters. Stop bij Bodega La Geria voor proeverij (optioneel).', link:'https://maps.google.com/?q=La+Geria+Lanzarote'},
+    {tijd:'13:00', titel:'Terug hotel — ±25 min via Yaiza', tekst:'', link:'https://maps.google.com/?saddr=La+Geria+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
+  ],
+  dag7: [
+    {tijd:'09:00', titel:'Vroeg vertrek — noorden is 80 km', tekst:'Rustig noordwaarts rijden via de kust.', link:''},
+    {tijd:'10:30', titel:'Mirador del Río', tekst:'Uitkijkpunt op 475 m hoogte. Spectaculair uitzicht op La Graciosa. Entree ±€5 p.p.', link:'https://maps.google.com/?q=Mirador+del+Rio+Lanzarote'},
+    {tijd:'11:30', titel:'Jameos del Agua', tekst:'Lavagrot met ondergronds meer en blinde albino krabben. Entree ±€11 p.p.', link:'https://maps.google.com/?q=Jameos+del+Agua+Lanzarote'},
+    {tijd:'13:00', titel:'Terug hotel — ±55 min', tekst:'', link:'https://maps.google.com/?saddr=Jameos+del+Agua+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
+  ],
+  dag8: [
+    {tijd:'10:00', titel:'Arrecife — hoofdstad van Lanzarote', tekst:'±35 km, 35 min. Authentieke stad, weinig massatoerisme. Haven, winkeltjes, zaterdagmarkt.', link:'https://maps.google.com/?q=Haven+Arrecife+Lanzarote'},
+    {tijd:'13:30', titel:'Terug hotel', tekst:'', link:'https://maps.google.com/?saddr=Arrecife+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
+  ],
+  dag9: [
+    {tijd:'Ochtend', titel:'Uitgebreid Privilege ontbijt', tekst:'Geen tijdsdruk. Krant, koffie, goed ontbijt.', link:''},
+    {tijd:'Voormiddag', titel:'Naar keuze', tekst:'Nog een uitstap naar Marina of vroeg aan het zwembad. Totaal vrij.', link:''},
+    {tijd:'Namiddag', titel:'Zwembad & winterzon', tekst:'Privilege snack bar, cocktail, ligstoel.', link:''},
+    {tijd:'Avond', titel:'Laatste avondmaaltijden', tekst:'Vraag op dag 9 een tafel in Blue Moon voor de laatste avond.', link:''}
+  ],
+  dag11: [
+    {tijd:'Ochtend', titel:'Uitchecken & luchthaven', tekst:'Vlucht SN3788 vertrekt om 18:15. Uitchecken voor 12u — vraag late check-out of bagageopslag. Tank voltanken bij luchthaven.', link:'https://maps.google.com/?saddr=H10+Rubicon+Horizons+Collection+Playa+Blanca&daddr=Lanzarote+Airport+ACE'}
+  ]
+};
+
+function mapsBtn(url, tekst){
+  if(!url) return '';
+  return `<a class="btn-map" style="margin-top:7px" href="${url}" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${tekst||'Bekijk op kaart'}</a>`;
+}
+
+/* ---- Vluchten ---- */
+function renderVluchten(){
+  const heen = guideData.vluchtHeen || DEFAULT_VLUCHT_HEEN;
+  const terug = guideData.vluchtTerug || DEFAULT_VLUCHT_TERUG;
+  const el = document.getElementById('vlucht-strip');
+  if(el) el.innerHTML = `
+    <div class="vlucht-rij"><div class="vlucht-ico">✈️</div><div class="vlucht-info"><div class="vlucht-num">Heenvlucht &mdash; ${heen.maatschappij}</div><div class="vlucht-route">${heen.van} &rarr; ${heen.naar}</div><div class="vlucht-tijd">${heen.datum} &middot; ${heen.tijd}</div></div><span class="edit-i" onclick="editVlucht('heen')">✎</span></div>
+    <div class="vlucht-rij"><div class="vlucht-ico">🏡</div><div class="vlucht-info"><div class="vlucht-num">Terugvlucht &mdash; ${terug.maatschappij}</div><div class="vlucht-route">${terug.van} &rarr; ${terug.naar}</div><div class="vlucht-tijd">${terug.datum} &middot; ${terug.tijd}</div></div><span class="edit-i" onclick="editVlucht('terug')">✎</span></div>`;
+}
+window.editVlucht = function(richting){
+  const key = richting==='heen' ? 'vluchtHeen' : 'vluchtTerug';
+  const cur = guideData[key] || (richting==='heen'?DEFAULT_VLUCHT_HEEN:DEFAULT_VLUCHT_TERUG);
+  const maatschappij = prompt('Maatschappij:', cur.maatschappij); if(maatschappij===null) return;
+  const van = prompt('Van:', cur.van); if(van===null) return;
+  const naar = prompt('Naar:', cur.naar); if(naar===null) return;
+  const datum = prompt('Datum:', cur.datum); if(datum===null) return;
+  const tijd = prompt('Tijd:', cur.tijd); if(tijd===null) return;
+  veldOpslaanNu(key, {maatschappij,van,naar,datum,tijd}).then(renderVluchten);
+};
+
+/* ---- Hotel ---- */
+function renderHotel(){
+  const h = guideData.hotel || DEFAULT_HOTEL;
+  const el = document.getElementById('hotel-detail');
+  if(el) el.innerHTML = `
+    <div class="hotel-rij"><span class="i">📍</span><span>${h.naam} — ${h.adres}</span></div>
+    <div class="hotel-rij"><span class="i">ℹ️</span><span>${h.kenmerken}</span></div>`;
+  const link = document.getElementById('hotel-mapslink');
+  if(link) link.href = 'https://maps.google.com/?q=' + encodeURIComponent(h.mapsQuery);
+}
+window.editHotel = function(){
+  const h = guideData.hotel || DEFAULT_HOTEL;
+  const naam = prompt('Naam hotel:', h.naam); if(naam===null) return;
+  const adres = prompt('Adres:', h.adres); if(adres===null) return;
+  const kenmerken = prompt('Kenmerken (sterren, faciliteiten):', h.kenmerken); if(kenmerken===null) return;
+  const mapsQuery = prompt('Zoekterm voor Maps:', h.mapsQuery); if(mapsQuery===null) return;
+  veldOpslaanNu('hotel', {naam,adres,kenmerken,mapsQuery}).then(renderHotel);
+};
+
+/* ---- Dagactiviteiten ---- */
+function getActiviteiten(dagKey){
+  guideData.activiteiten = guideData.activiteiten || {};
+  if(!guideData.activiteiten[dagKey]) guideData.activiteiten[dagKey] = (DEFAULT_ACTIVITEITEN[dagKey]||[]).slice();
+  return guideData.activiteiten[dagKey];
+}
+function renderActiviteiten(dagKey){
+  const lijst = getActiviteiten(dagKey);
+  const el = document.getElementById('tijdlijn-'+dagKey);
+  if(!el) return;
+  el.innerHTML = lijst.map((a,i) => `
+    <div class="tb">
+      <div class="tb-tijd">${a.tijd}</div>
+      <div class="tb-wat">
+        <strong>${a.titel} <span class="edit-i" onclick="editActiviteit('${dagKey}',${i})">✎</span> <span class="del-i" onclick="delActiviteit('${dagKey}',${i})">verwijder</span></strong>
+        <p>${a.tekst}</p>
+        ${mapsBtn(a.link,'')}
+      </div>
+    </div>`).join('') || '<div class="verslag-leeg">Nog geen activiteiten toegevoegd.</div>';
+}
+window.addActiviteit = function(dagKey){
+  const tijd = prompt('Tijdstip (bv. 10:00):'); if(tijd===null||!tijd.trim()) return;
+  const titel = prompt('Titel:'); if(titel===null||!titel.trim()) return;
+  const tekst = prompt('Beschrijving:','') || '';
+  const link = prompt('Link naar Maps (optioneel):','') || '';
+  const lijst = getActiviteiten(dagKey);
+  lijst.push({tijd:tijd.trim(), titel:titel.trim(), tekst:tekst.trim(), link:link.trim()});
+  veldOpslaanNu('activiteiten', guideData.activiteiten).then(()=>renderActiviteiten(dagKey));
+};
+window.editActiviteit = function(dagKey, i){
+  const lijst = getActiviteiten(dagKey);
+  const a = lijst[i];
+  const tijd = prompt('Tijdstip:', a.tijd); if(tijd===null) return;
+  const titel = prompt('Titel:', a.titel); if(titel===null) return;
+  const tekst = prompt('Beschrijving:', a.tekst); if(tekst===null) return;
+  const link = prompt('Link naar Maps (optioneel):', a.link||''); if(link===null) return;
+  lijst[i] = {tijd:tijd.trim(), titel:titel.trim(), tekst:tekst.trim(), link:link.trim()};
+  veldOpslaanNu('activiteiten', guideData.activiteiten).then(()=>renderActiviteiten(dagKey));
+};
+window.delActiviteit = function(dagKey, i){
+  if(!confirm('Deze activiteit verwijderen?')) return;
+  const lijst = getActiviteiten(dagKey);
+  lijst.splice(i,1);
+  veldOpslaanNu('activiteiten', guideData.activiteiten).then(()=>renderActiviteiten(dagKey));
+};
+
+const DAGEN = [
+  { id:'dag1',  titel:'Dag 1 — Aankomst',                datum:'Zaterdag 2 januari' },
+  { id:'dag2',  titel:'Dag 2 — Marina Rubicón',          datum:'Zondag 3 januari' },
+  { id:'dag3',  titel:'Dag 3 — Playa Blanca centrum',    datum:'Maandag 4 januari' },
+  { id:'dag4',  titel:'Dag 4 — Playa Papagayo',          datum:'Dinsdag 5 januari' },
+  { id:'dag5',  titel:'Dag 5 — El Golfo & westkust',     datum:'Woensdag 6 januari' },
+  { id:'dag6',  titel:'Dag 6 — Timanfaya & La Geria',    datum:'Donderdag 7 januari' },
+  { id:'dag7',  titel:'Dag 7 — Mirador del Río & Jameos',datum:'Vrijdag 8 januari' },
+  { id:'dag8',  titel:'Dag 8 — Arrecife',                datum:'Zaterdag 9 januari' },
+  { id:'dag9',  titel:'Dag 9 — Vrije dag',               datum:'Zondag 10 januari' },
+  { id:'dag10', titel:'Dag 10 — Vrije dag',              datum:'Maandag 11 januari' },
+  { id:'dag11', titel:'Dag 11 — Vertrek',                datum:'Dinsdag 12 januari' },
+];
+
+function bewaar(id, val) { veldOpslaan(id, val); }
+
+function renderBevestigingen(){
+  const lijst = guideData.bevestigingen || [];
+  const el = document.getElementById('bev-lijst');
+  if (!el) return;
+  el.innerHTML = lijst.map((b, i) => `
+    <div class="bev-item">
+      <a href="${escapeAttr(b.url)}" target="_blank" rel="noopener">${escapeHtml(b.naam || b.url)}</a>
+      <span class="bev-del" onclick="verwijderBevestiging(${i})">verwijder</span>
+    </div>`).join('') || '<div class="verslag-leeg">Nog geen bevestigingen gekoppeld</div>';
+}
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str); }
+
+async function handleBevestigingFile(){
+  const fileInp = document.getElementById('bev-file');
+  const naamInp = document.getElementById('bev-naam');
+  const statusEl = document.getElementById('bev-status');
+  const file = fileInp.files && fileInp.files[0];
+  if (!file) return;
+  const naam = naamInp.value.trim() || file.name;
+  if (statusEl) statusEl.textContent = '⏳ Bezig met uploaden...';
   try{
-    const url=await uploadConfirmation(file);
-    trip.confirmations=trip.confirmations||[];
-    trip.confirmations.push({name,url});
-    n.value=''; inp.value=''; st.textContent='';
-    save(); renderConfirmations();
-  }catch(e){ console.error(e); st.textContent='⚠️ mislukt, probeer opnieuw'; }
+    const url = await uploadBevestigingFoto(file, 'lanzarote');
+    guideData.bevestigingen = guideData.bevestigingen || [];
+    guideData.bevestigingen.push({naam, url});
+    await setDoc(guideDocRef, { bevestigingen: guideData.bevestigingen }, { merge: true });
+    naamInp.value = '';
+    fileInp.value = '';
+    renderBevestigingen();
+  }catch(err){
+    console.error(err);
+    if (statusEl) statusEl.textContent = '⚠️ Uploaden mislukt, probeer opnieuw.';
+  }
 }
-function addConfirmationLink(){
-  const n=document.getElementById('newConfirmName'), u=document.getElementById('newConfirmUrl');
-  if(!u.value.trim()) return;
-  trip.confirmations=trip.confirmations||[];
-  trip.confirmations.push({name:n.value.trim(), url:u.value.trim()});
-  n.value=''; u.value='';
-  save(); renderConfirmations();
+function voegBevestigingToe(){
+  const naamInp = document.getElementById('bev-naam');
+  const urlInp = document.getElementById('bev-url');
+  const naam = naamInp.value.trim();
+  const url = urlInp.value.trim();
+  if (!url) return;
+  guideData.bevestigingen = guideData.bevestigingen || [];
+  guideData.bevestigingen.push({naam, url});
+  setDoc(guideDocRef, { bevestigingen: guideData.bevestigingen }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+  naamInp.value = '';
+  urlInp.value = '';
+  renderBevestigingen();
 }
-function delConfirmation(i){ if(!confirm('Verwijderen?')) return; trip.confirmations.splice(i,1); save(); renderConfirmations(); }
-function renderConfirmations(){
-  document.getElementById('confirmationsList').innerHTML = (trip.confirmations||[]).map((c,i)=>`
-    <div class="card row"><a href="${c.url}" target="_blank">📎 ${c.name||c.url}</a><span class="icon-btn del" onclick="delConfirmation(${i})">✕</span></div>
-  `).join('') || '<div class="empty">Nog geen bevestigingen</div>';
+function verwijderBevestiging(i){
+  if (!guideData.bevestigingen) return;
+  guideData.bevestigingen.splice(i, 1);
+  setDoc(guideDocRef, { bevestigingen: guideData.bevestigingen }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+  renderBevestigingen();
 }
 
-/* Checklist */
-function renderChecklist(){
-  document.getElementById('checklist').innerHTML = (trip.checklist||[]).map((c,i)=>`
-    <div class="check-item"><div class="box ${c.done?'done':''}" onclick="toggleCheck(${i})">${c.done?'✓':''}</div>
-    <span class="txt ${c.done?'done':''}" style="flex:1;">${c.text}</span>
-    <span class="icon-btn" onclick="editCheck(${i})">✎</span></div>
-  `).join('') || '<div class="empty">Nog geen acties</div>';
-}
-function addCheck(){ const i=document.getElementById('newCheck'); if(!i.value.trim()) return; trip.checklist=trip.checklist||[]; trip.checklist.push({text:i.value.trim(),done:false}); i.value=''; save(); renderChecklist(); }
-function toggleCheck(i){ trip.checklist[i].done=!trip.checklist[i].done; save(); renderChecklist(); }
-function editCheck(i){ const v=prompt('Actie:', trip.checklist[i].text); if(v===null||!v.trim()) return; trip.checklist[i].text=v.trim(); save(); renderChecklist(); }
+const BUDGET_IDS = ['b-vluchten','b-hotel','b-auto','b-uitstap','b-eten','b-shop','b-div'];
 
-/* Notities */
-function renderNotes(){
-  document.getElementById('notesList').innerHTML = (trip.notes||[]).map((n,i)=>`
-    <div class="card row"><span>${n}</span><span><span class="icon-btn" onclick="editNote(${i})">✎</span> <span class="icon-btn del" onclick="delNote(${i})">✕</span></span></div>
-  `).join('') || '<div class="empty">Nog geen notities</div>';
-}
-function addNote(){ const i=document.getElementById('newNote'); if(!i.value.trim()) return; trip.notes=trip.notes||[]; trip.notes.push(i.value.trim()); i.value=''; save(); renderNotes(); }
-function editNote(i){ const v=prompt('Notitie:', trip.notes[i]); if(v===null||!v.trim()) return; trip.notes[i]=v.trim(); save(); renderNotes(); }
-function delNote(i){ if(!confirm('Verwijderen?')) return; trip.notes.splice(i,1); save(); renderNotes(); }
+onSnapshot(guideDocRef, (snap) => {
+  guideData = snap.exists() ? snap.data() : {};
+  DAGEN.forEach(d => {
+    const el = document.getElementById('n-'+d.id);
+    if(el && guideData[d.id] !== undefined) el.value = guideData[d.id];
+  });
+  BUDGET_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if(el && guideData[id] !== undefined) el.value = guideData[id];
+  });
+  renderBevestigingen();
+  renderVluchten();
+  renderHotel();
+  ['dag1','dag2','dag3','dag4','dag5','dag6','dag7','dag8','dag9','dag11'].forEach(renderActiviteiten);
+  herbereken();
+}, (err) => console.error('sync error', err));
 
-load();
+function vulVerslag() {
+  const c = document.getElementById('verslag-inhoud');
+  let html = '';
+  let heeftIets = false;
+  DAGEN.forEach(d => {
+    const el = document.getElementById('n-'+d.id);
+    const tekst = el ? el.value.trim() : '';
+    if (tekst) heeftIets = true;
+    html += `<div class="verslag-dag-blok">
+      <div class="verslag-dag-titel">${d.titel}</div>
+      <div class="verslag-dag-datum">${d.datum}</div>
+      ${tekst
+        ? `<div class="verslag-dag-tekst">${tekst.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+        : `<div class="verslag-leeg">Nog geen notitie voor deze dag.</div>`
+      }
+    </div>`;
+  });
+  if (!heeftIets) {
+    c.innerHTML = '<p style="color:#BDB5AC;font-size:0.8rem;font-style:italic;text-align:center;padding:24px 0;">Vul belevenissen in bij elke dag — ze verschijnen hier automatisch.</p>';
+  } else {
+    c.innerHTML = html;
+  }
+}
+
+function kopieer() {
+  let txt = 'LANZAROTE 2027 — Danny & Martine\n2 – 12 januari\n\n';
+  DAGEN.forEach(d => {
+    const el = document.getElementById('n-'+d.id);
+    const tekst = el ? el.value.trim() : '';
+    txt += d.titel.toUpperCase() + '\n' + d.datum + '\n';
+    txt += (tekst || '(geen notitie)') + '\n\n';
+  });
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(() => toast('✅ Verslag gekopieerd!')).catch(() => toast('Kopieer handmatig'));
+  } else {
+    toast('Kopieer de tekst handmatig');
+  }
+}
+
+function deel() {
+  if (navigator.share) {
+    navigator.share({ title:'Lanzarote 2027 — Danny & Martine', url: window.location.href }).catch(()=>{});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href).then(() => toast('🔗 Link gekopieerd!'));
+  } else {
+    toast('Kopieer de URL uit de adresbalk');
+  }
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('zicht');
+  setTimeout(() => t.classList.remove('zicht'), 2600);
+}
+
+function herbereken(){
+  const g = id => parseFloat(document.getElementById(id)?.value) || 0;
+  const vast = g('b-vluchten') + g('b-hotel');
+  const ter = g('b-auto') + g('b-uitstap') + g('b-eten') + g('b-shop') + g('b-div');
+  const totaal = vast + ter;
+  const fmt = n => n > 0 ? '€ ' + n.toFixed(0) : '€ —';
+  document.getElementById('tot-vast').textContent = fmt(vast);
+  document.getElementById('tot-ter').textContent = fmt(ter);
+  document.getElementById('tot-alles').textContent = fmt(totaal);
+  document.getElementById('tot-pp').textContent = totaal > 0 ? '€ ' + (totaal/2).toFixed(0) + ' p.p.' : '€ —';
+}
+
+function go(naam, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('p-'+naam).classList.add('on');
+  btn.classList.add('on');
+  window.scrollTo(0,0);
+  if (naam === 'verslag') vulVerslag();
+}
+
+herbereken();
+BUDGET_IDS.forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', () => veldOpslaan(id, el.value));
+});
+
+window.go = go;
+window.bewaar = bewaar;
+window.kopieer = kopieer;
+window.deel = deel;
+window.vulVerslag = vulVerslag;
+window.herbereken = herbereken;
+window.voegBevestigingToe = voegBevestigingToe;
+window.handleBevestigingFile = handleBevestigingFile;
+window.verwijderBevestiging = verwijderBevestiging;
 </script>
 </body>
 </html>
