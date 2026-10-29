@@ -581,6 +581,18 @@ textarea.notitie::placeholder { color: #BDB5AC; }
 .edit-i{color:var(--terra);cursor:pointer;font-size:.85rem;margin-left:6px;font-weight:700}
 .add-blok2{display:block;width:100%;margin-top:6px;background:#F5F0EA;color:var(--muted);border:1.5px dashed var(--line);border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer}
 .del-i{color:#a13d2b;cursor:pointer;font-size:.68rem;font-weight:600;flex-shrink:0}
+
+.pak-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.pak-item:last-child{border-bottom:none}
+.pak-item input[type=checkbox]{width:19px;height:19px;flex-shrink:0;accent-color:var(--terra);cursor:pointer}
+.pak-tekst{flex:1;font-size:.85rem;color:var(--lava);line-height:1.4}
+.pak-item.klaar .pak-tekst{color:#BDB5AC;text-decoration:line-through}
+.pak-progress{font-size:.72rem;color:var(--muted);font-weight:600;margin-bottom:4px}
+.pak-bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-bottom:14px}
+.pak-bar-fill{height:100%;background:var(--terra);transition:width .25s}
+.pak-add-row{display:flex;gap:6px;margin-top:12px}
+.pak-add-row input{flex:1;font-family:'Inter',sans-serif;font-size:.8rem;padding:9px 11px;border:1.5px solid var(--line);border-radius:8px;background:white;color:var(--lava)}
+.pak-add-row button{background:var(--terra);color:white;border:none;border-radius:8px;padding:0 16px;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -599,6 +611,7 @@ textarea.notitie::placeholder { color: #BDB5AC; }
   <div class="tabs">
     <button class="tab on"  onclick="go('overzicht',this)">Overzicht</button>
     <button class="tab"     onclick="go('hotel',this)">Hotel</button>
+    <button class="tab"     onclick="go('pak',this)">🧳 Inpakken</button>
     <button class="tab"     onclick="go('fase1',this)">Fase 1</button>
     <button class="tab"     onclick="go('fase2',this)">Fase 2</button>
     <button class="tab"     onclick="go('fase3',this)">Fase 3</button>
@@ -618,6 +631,22 @@ textarea.notitie::placeholder { color: #BDB5AC; }
 
   <div class="vlucht-strip" id="vlucht-strip"></div>
 
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">📎 Documenten bij de hand</div><div class="card-hdr-datum">Vertrek · aankomst · verblijf</div></div>
+    <div class="card-body">
+      <div id="bev-lijst"></div>
+      <div class="bev-add-row">
+        <input type="text" class="bev-naam" id="bev-naam" placeholder="Naam (bv. hotelbevestiging H10)">
+        <label style="background:var(--terra); color:white; border:none; border-radius:8px; padding:0 14px; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; white-space:nowrap;">📷 Kies bestand<input type="file" accept="image/*,application/pdf" id="bev-file" style="display:none;" onchange="handleBevestigingFile()"></label>
+      </div>
+      <div class="bev-add-row">
+        <input type="text" class="bev-url" id="bev-url" placeholder="Of plak zelf een link (Google Drive...)">
+        <button onclick="voegBevestigingToe()">+</button>
+      </div>
+      <div class="bev-hint" id="bev-status">Zet hier de mails van hotel &amp; huurwagen (foto of screenshot) — dan heb je ze altijd meteen bij de hand.</div>
+    </div>
+  </div>
+
   <div class="ov-card">
     <div class="ov-hdr">📅 Dagplanning</div>
     <div class="ov-body">
@@ -627,18 +656,18 @@ textarea.notitie::placeholder { color: #BDB5AC; }
       <div class="ov-rij"><div class="ov-dag">Di 5 jan</div><div class="ov-txt">Playa Papagayo — stranden vlakbij</div><div class="badge b-buurt">Strand</div></div>
       <div class="ov-rij"><div class="ov-dag">Wo 6 jan</div><div class="ov-txt">El Golfo &amp; Los Hervideros — westkust</div><div class="badge b-eiland">Eiland</div></div>
       <div class="ov-rij"><div class="ov-dag">Do 7 jan</div><div class="ov-txt">Timanfaya Nationaal Park &amp; La Geria</div><div class="badge b-eiland">Eiland</div></div>
-      <div class="ov-rij"><div class="ov-dag">Vr 8 jan</div><div class="ov-txt">Mirador del Río &amp; Jameos del Agua</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Vr 8 jan</div><div class="ov-txt">Mirador del Río — voormiddag, terug voor 13u</div><div class="badge b-eiland">Eiland</div></div>
       <div class="ov-rij"><div class="ov-dag">Za 9 jan</div><div class="ov-txt">Arrecife — hoofdstad, haven, markt</div><div class="badge b-eiland">Eiland</div></div>
-      <div class="ov-rij"><div class="ov-dag">Zo 10 jan</div><div class="ov-txt">Vrije dag — hotel &amp; zwembad</div><div class="badge b-hotel">Hotel</div></div>
-      <div class="ov-rij"><div class="ov-dag">Ma 11 jan</div><div class="ov-txt">Vrije dag — laatste genieten</div><div class="badge b-hotel">Hotel</div></div>
+      <div class="ov-rij"><div class="ov-dag">Zo 10 jan</div><div class="ov-txt">Jameos del Agua — laatste uitstap, voormiddag</div><div class="badge b-eiland">Eiland</div></div>
+      <div class="ov-rij"><div class="ov-dag">Ma 11 jan</div><div class="ov-txt">Volledig vrije dag — geen auto, enkel hotel</div><div class="badge b-hotel">Hotel</div></div>
       <div class="ov-rij"><div class="ov-dag">Di 12 jan</div><div class="ov-txt">Vertrek — SN3788 om 18:15</div><div class="badge b-hotel">Vertrek</div></div>
     </div>
   </div>
 
   <div class="tipbox">
     <h3>✈️ Praktisch</h3>
-    <div class="tip"><span class="tip-i">🚗</span><span>Auto ophalen bij ACE na landing 17:25. Rijden naar hotel ±40 min via LZ-2.</span></div>
-    <div class="tip"><span class="tip-i">⏰</span><span>Jullie regel: altijd voor 15u terug in hotel voor snack en winterzon.</span></div>
+    <div class="tip"><span class="tip-i">🚗</span><span>Auto ophalen bij AutoReisen (reservering 5782768) na landing, balie in de luchthaven. Rijden naar hotel ±40 min via LZ-2.</span></div>
+    <div class="tip"><span class="tip-i">⏰</span><span>Jullie regel: uitstappen enkel in de voormiddag, altijd voor 14-15u terug in hotel voor zwembad en siësta. Mirador del Río en Jameos del Agua zijn daarom bewust over twee dagen gespreid in plaats van gecombineerd.</span></div>
     <div class="tip"><span class="tip-i">📖</span><span>Noteer elke dag jullie belevenissen in het tabblad van die fase — alles komt samen in het Verslag.</span></div>
     <div class="tip"><span class="tip-i">🗺️</span><span>Download offline kaart van Lanzarote in Google Maps vóór vertrek.</span></div>
     <div class="tip"><span class="tip-i">🎟️</span><span>Boek Timanfaya tickets op voorhand via de website van Cabildo de Lanzarote.</span></div>
@@ -663,20 +692,19 @@ textarea.notitie::placeholder { color: #BDB5AC; }
     </a>
   </div>
 
-  <div class="card">
-    <div class="card-hdr"><div class="card-hdr-titel">📎 Bevestigingen</div><div class="card-hdr-datum">Vluchten, transfer, tickets...</div></div>
-    <div class="card-body">
-      <div id="bev-lijst"></div>
-      <div class="bev-add-row">
-        <input type="text" class="bev-naam" id="bev-naam" placeholder="Naam (bv. vluchtticket SN3787)">
-        <label style="background:var(--terra); color:white; border:none; border-radius:8px; padding:0 14px; font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; white-space:nowrap;">📷 Kies bestand<input type="file" accept="image/*,application/pdf" id="bev-file" style="display:none;" onchange="handleBevestigingFile()"></label>
-      </div>
-      <div class="bev-add-row">
-        <input type="text" class="bev-url" id="bev-url" placeholder="Of plak zelf een link (Google Drive...)">
-        <button onclick="voegBevestigingToe()">+</button>
-      </div>
-      <div class="bev-hint" id="bev-status">Kies een foto (wordt automatisch gecomprimeerd), of plak zelf een link.</div>
-    </div>
+  <div class="hotelbox" style="background:var(--lava2)">
+    <h3>🏨 Hotelboeking <span class="edit-i" onclick="editHotelboeking()">✎</span></h3>
+    <div id="hotelboeking-detail"></div>
+  </div>
+
+  <div class="hotelbox" style="background:var(--sea)">
+    <h3 style="color:var(--sun)">🚗 Huurwagen <span class="edit-i" onclick="editHuurwagen()">✎</span></h3>
+    <div id="huurwagen-detail"></div>
+  </div>
+
+  <div class="tipbox">
+    <h3>📎 Documenten</h3>
+    <div class="tip"><span class="tip-i">📷</span><span>De eigenlijke mails (hotel &amp; huurwagen) staan bovenaan op het Overzicht-tabblad onder "Documenten bij de hand" — daar kan je ze als foto bewaren zodat je ze altijd snel terugvindt.</span></div>
   </div>
 
   <div class="ritme-card">
@@ -699,6 +727,34 @@ textarea.notitie::placeholder { color: #BDB5AC; }
     <div class="tip"><span class="tip-i">🛏️</span><span>Kussenmenu aanvragen bij check-in — groot verschil in slaapcomfort.</span></div>
     <div class="tip"><span class="tip-i">🍹</span><span>Premium dranken inbegrepen — geen verrassingen op de rekening.</span></div>
     <div class="tip"><span class="tip-i">🌙</span><span>Turndown service met kleine attentie elke avond — typisch Privilege touch.</span></div>
+  </div>
+</div>
+
+<!-- INPAKKEN -->
+<div id="p-pak" class="page">
+  <div class="hero" style="background: linear-gradient(135deg, #4A2A6A 0%, #2A1040 100%);">
+    <div class="hero-eye">Vóór vertrek</div>
+    <h2>🧳 Valiezen maken</h2>
+    <p>Alles wat mee moet — vink af wat klaar is, voeg toe wat nog ontbreekt.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Paklijst</div><div class="card-hdr-datum" id="pak-teller">0 / 0 klaar</div></div>
+    <div class="card-body">
+      <div class="pak-progress" id="pak-progress-lbl"></div>
+      <div class="pak-bar"><div class="pak-bar-fill" id="pak-bar-fill" style="width:0%"></div></div>
+      <div id="pak-lijst"></div>
+      <div class="pak-add-row">
+        <input type="text" id="pak-nieuw" placeholder="Nog iets toevoegen..." onkeydown="if(event.key==='Enter')voegPakItemToe()">
+        <button onclick="voegPakItemToe()">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tipbox">
+    <h3>💡 Niet vergeten</h3>
+    <div class="tip"><span class="tip-i">🌡️</span><span>Lanzarote in januari: zacht, ±20-22°C overdag, 's avonds frisser en soms winderig.</span></div>
+    <div class="tip"><span class="tip-i">💶</span><span>Kredietkaart nodig als waarborg bij ophalen huurwagen.</span></div>
   </div>
 </div>
 
@@ -762,10 +818,10 @@ textarea.notitie::placeholder { color: #BDB5AC; }
   </div>
 
   <div class="card">
-    <div class="card-hdr"><div class="card-hdr-titel">Dag 7 — Mirador del Río &amp; Jameos</div><div class="card-hdr-datum">Vr 8 januari</div></div>
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 7 — Mirador del Río</div><div class="card-hdr-datum">Vr 8 januari</div></div>
     <div class="card-body" id="tijdlijn-dag7"></div>
     <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag7')">+ activiteit toevoegen</button></div>
-    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag7" placeholder="Mirador del Río — La Graciosa zichtbaar? Jameos — de grot, de krabben?" oninput="bewaar('dag7',this.value)"></textarea></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag7" placeholder="Mirador del Río — La Graciosa zichtbaar? Mooi weer?" oninput="bewaar('dag7',this.value)"></textarea></div>
   </div>
 
   <div class="card">
@@ -779,21 +835,23 @@ textarea.notitie::placeholder { color: #BDB5AC; }
 <!-- FASE 3 -->
 <div id="p-fase3" class="page">
   <div class="hero" style="background: linear-gradient(135deg, var(--sea) 0%, #1A3E52 100%);">
-    <div class="hero-eye">Dag 9 &amp; 10 • 10 – 11 januari</div>
-    <h2>Fase 3 — Pure ontspanning</h2>
-    <p>Niets moeten. Zwembad, zon, aperitief, goed eten.</p>
+    <div class="hero-eye">Dag 9 t/m 11 • 10 – 12 januari</div>
+    <h2>Fase 3 — Laatste uitstap &amp; ontspanning</h2>
+    <p>Eén laatste korte voormiddaguitstap, dan niets meer moeten. Zwembad, zon, aperitief, goed eten.</p>
   </div>
 
   <div class="card">
-    <div class="card-hdr"><div class="card-hdr-titel">Dag 9 &amp; 10 — Vrije dagen</div><div class="card-hdr-datum">Zo 10 &amp; Ma 11 januari</div></div>
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 9 — Jameos del Agua</div><div class="card-hdr-datum">Zo 10 januari</div></div>
     <div class="card-body" id="tijdlijn-dag9"></div>
     <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag9')">+ activiteit toevoegen</button></div>
-    <div class="notitie-blok">
-      <div class="notitie-lbl">✏️ Zondag 10 jan</div>
-      <textarea class="notitie" id="n-dag9" placeholder="Hoe was de rustdag? Blue Moon restaurant?" oninput="bewaar('dag9',this.value)"></textarea>
-      <div class="notitie-lbl" style="margin-top:10px;">✏️ Maandag 11 jan</div>
-      <textarea class="notitie" id="n-dag10" placeholder="Laatste volledige dag. Wat voelen jullie?" oninput="bewaar('dag10',this.value)"></textarea>
-    </div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag9" placeholder="Jameos del Agua — de grot, de krabben? Blue Moon restaurant 's avonds?" oninput="bewaar('dag9',this.value)"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-hdr-titel">Dag 10 — Volledig vrije dag</div><div class="card-hdr-datum">Ma 11 januari</div></div>
+    <div class="card-body" id="tijdlijn-dag10"></div>
+    <div style="padding:0 16px 14px;"><button class="add-blok2" onclick="addActiviteit('dag10')">+ activiteit toevoegen</button></div>
+    <div class="notitie-blok"><div class="notitie-lbl">✏️ Onze belevenissen</div><textarea class="notitie" id="n-dag10" placeholder="Laatste volledige dag — geen auto, enkel hotel. Wat voelen jullie?" oninput="bewaar('dag10',this.value)"></textarea></div>
   </div>
 
   <div class="card">
@@ -852,13 +910,13 @@ textarea.notitie::placeholder { color: #BDB5AC; }
     <div class="card-hdr" style="background:#1A5228"><div class="card-hdr-titel">Vaste kosten — al geboekt</div><div class="card-hdr-datum">Gekende bedragen</div></div>
     <div class="card-body">
       <div class="tb"><div class="tb-wat"><strong>SN3787 + SN3788 — Brussel ↔ Lanzarote</strong><p>2 personen retour</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-vluchten" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
-      <div class="tb"><div class="tb-wat"><strong>Hotel — 10 nachten</strong><p>Privilege All Inclusive, 2 personen</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-hotel" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Hotel — 10 nachten</strong><p>Privilegekamer All Inclusive, 2 personen, incl. 15% korting · boeking 2301-019614</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-hotel" placeholder="bedrag" oninput="herbereken()" style="width:120px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
     </div>
   </div>
   <div class="card">
     <div class="card-hdr" style="background:#1A5228"><div class="card-hdr-titel">Ter plaatse</div><div class="card-hdr-datum">Vul aan tijdens de reis</div></div>
     <div class="card-body">
-      <div class="tb"><div class="tb-wat"><strong>Huurwagen</strong><p>Volledige huurperiode</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-auto" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
+      <div class="tb"><div class="tb-wat"><strong>Huurwagen</strong><p>AutoReisen · Citroën C3 · reservering 5782768</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-auto" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
       <div class="tb"><div class="tb-wat"><strong>Uitstappen &amp; tickets</strong><p>Timanfaya, Jameos, Mirador del Río, ...</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-uitstap" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
       <div class="tb"><div class="tb-wat"><strong>Eten &amp; drinken buiten het hotel</strong><p>Restaurants, terrasjes</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-eten" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
       <div class="tb"><div class="tb-wat"><strong>Shopping</strong><p>Souvenirs, wijn uit La Geria, ...</p><div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:.78rem;color:var(--muted)">€</span><input type="number" id="b-shop" placeholder="totaal" oninput="herbereken()" style="width:150px;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.82rem;font-family:'Inter',sans-serif;"></div></div></div>
@@ -941,6 +999,42 @@ const DEFAULT_VLUCHT_HEEN = {maatschappij:'SN 3787', van:'Brussel (BRU)', naar:'
 const DEFAULT_VLUCHT_TERUG = {maatschappij:'SN 3788', van:'Lanzarote (ACE)', naar:'Brussel (BRU)', datum:'Dinsdag 12 jan', tijd:'Vertrek 18:15 · Aankomst 23:30'};
 const DEFAULT_HOTEL = {naam:'H10 Rubicón Horizons Collection', adres:'Playa Blanca, Yaiza, Lanzarote', kenmerken:'5 sterren · Privilege All Inclusive · Eigen Privilege zwembad met bistro bar · Blue Moon restaurant + meerdere à la carte · Avondanimatie: shows, live muziek, thema-avonden · Taxi naar centrum ±€5, bus €1,50', mapsQuery:'H10 Rubicon Horizons Collection Playa Blanca Lanzarote'};
 
+const DEFAULT_HOTELBOEKING = {
+  boekingsnr:'2301-019614',
+  checkin:'Zaterdag 2 januari 2027',
+  checkout:'Dinsdag 12 januari 2027',
+  nachten:'10 nachten · 2 volwassenen',
+  kamer:'Privilegekamer (lang verblijf, alles inclusief)',
+  prijs:'Totaal € 3.832,40 vóór korting · 10% H10-Ontsnapping (−€383,20) + 5% H10-Beloningen (−€191,60)',
+  totaal:'€ 3.257,50 incl. belastingen',
+  betaalwijze:'Kaart — te betalen in het hotel',
+  extra:'H10 Rewards kaart 900000083880 · gast: Danny Desmet · tel. (32) 476 75 89 90'
+};
+const DEFAULT_HUURWAGEN = {
+  maatschappij:'AutoReisen',
+  reservering:'5782768',
+  voertuig:'Categorie B — Citroën C3 5P A/C',
+  ophalen:'Lanzarote Luchthaven · za 2 jan 2027, 17:00',
+  terugbrengen:'Lanzarote Luchthaven · di 12 jan 2027, 17:00',
+  extra:'Incl. SeguroCPI-verzekering · neem reserveringsnummer, ID/paspoort, rijbewijs en kredietkaart mee aan de balie',
+  prijs:'€ 191,34'
+};
+
+const DEFAULT_PAKLIJST = [
+  'Paspoort / identiteitskaart',
+  'Rijbewijs (voor huurwagen)',
+  'Kredietkaart (waarborg huurwagen + betaling hotel)',
+  'Reserveringsnummers hotel & huurwagen (genoteerd of afgedrukt)',
+  'Zwemkleding (2x)',
+  'Zonnebrand hoge factor',
+  'Zonnebril & hoofddeksel',
+  'Lichte jas of windjack voor de avond',
+  'Wandelschoenen (vulkaanterrein Timanfaya/El Golfo)',
+  'Oplader + powerbank',
+  'Medicatie / toilettas',
+  'Boek of leesvoer voor bij het zwembad'
+].map(t => ({tekst:t, klaar:false}));
+
 const DEFAULT_ACTIVITEITEN = {
   dag1: [
     {tijd:'17:25', titel:'Landing Lanzarote — SN3787', tekst:'Auto ophalen, rijden naar hotel via LZ-2. ±35 km, 40 minuten. Gratis parkeren bij hotel.', link:'https://maps.google.com/?saddr=Lanzarote+Airport+ACE&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'},
@@ -969,20 +1063,22 @@ const DEFAULT_ACTIVITEITEN = {
     {tijd:'13:00', titel:'Terug hotel — ±25 min via Yaiza', tekst:'', link:'https://maps.google.com/?saddr=La+Geria+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
   ],
   dag7: [
-    {tijd:'09:00', titel:'Vroeg vertrek — noorden is 80 km', tekst:'Rustig noordwaarts rijden via de kust.', link:''},
-    {tijd:'10:30', titel:'Mirador del Río', tekst:'Uitkijkpunt op 475 m hoogte. Spectaculair uitzicht op La Graciosa. Entree ±€5 p.p.', link:'https://maps.google.com/?q=Mirador+del+Rio+Lanzarote'},
-    {tijd:'11:30', titel:'Jameos del Agua', tekst:'Lavagrot met ondergronds meer en blinde albino krabben. Entree ±€11 p.p.', link:'https://maps.google.com/?q=Jameos+del+Agua+Lanzarote'},
-    {tijd:'13:00', titel:'Terug hotel — ±55 min', tekst:'', link:'https://maps.google.com/?saddr=Jameos+del+Agua+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
+    {tijd:'09:30', titel:'Vertrek richting noorden', tekst:'±65 km, ruim 1 uur rijden via de kust. Bewust maar één stop deze dag, om de namiddag vrij te houden.', link:''},
+    {tijd:'10:45', titel:'Mirador del Río', tekst:'Uitkijkpunt op 475 m hoogte. Spectaculair uitzicht op La Graciosa. Entree ±€5 p.p. Rustig rondkijken, iets drinken op het terras.', link:'https://maps.google.com/?q=Mirador+del+Rio+Lanzarote'},
+    {tijd:'12:15', titel:'Terug hotel — ±1u15', tekst:'Jameos del Agua volgt op dag 9, zelfde richting maar apart, zodat deze voormiddag kort blijft.', link:'https://maps.google.com/?saddr=Mirador+del+Rio+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
   ],
   dag8: [
     {tijd:'10:00', titel:'Arrecife — hoofdstad van Lanzarote', tekst:'±35 km, 35 min. Authentieke stad, weinig massatoerisme. Haven, winkeltjes, zaterdagmarkt.', link:'https://maps.google.com/?q=Haven+Arrecife+Lanzarote'},
     {tijd:'13:30', titel:'Terug hotel', tekst:'', link:'https://maps.google.com/?saddr=Arrecife+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'}
   ],
   dag9: [
-    {tijd:'Ochtend', titel:'Uitgebreid Privilege ontbijt', tekst:'Geen tijdsdruk. Krant, koffie, goed ontbijt.', link:''},
-    {tijd:'Voormiddag', titel:'Naar keuze', tekst:'Nog een uitstap naar Marina of vroeg aan het zwembad. Totaal vrij.', link:''},
-    {tijd:'Namiddag', titel:'Zwembad & winterzon', tekst:'Privilege snack bar, cocktail, ligstoel.', link:''},
-    {tijd:'Avond', titel:'Laatste avondmaaltijden', tekst:'Vraag op dag 9 een tafel in Blue Moon voor de laatste avond.', link:''}
+    {tijd:'09:30', titel:'Vertrek richting Jameos del Agua', tekst:'±55 km, ±1 uur rijden. Laatste uitstap van de reis, daarna enkel nog hotel.', link:''},
+    {tijd:'10:45', titel:'Jameos del Agua', tekst:'Lavagrot met ondergronds meer en blinde albino krabben, aangelegde tuin van César Manrique. Entree ±€11 p.p. Eventueel even door naar Cueva de los Verdes ernaast.', link:'https://maps.google.com/?q=Jameos+del+Agua+Lanzarote'},
+    {tijd:'12:30', titel:'Terug hotel — ±1 uur', tekst:'Ruim op tijd terug voor zwembad en siësta.', link:'https://maps.google.com/?saddr=Jameos+del+Agua+Lanzarote&daddr=H10+Rubicon+Horizons+Collection+Playa+Blanca'},
+    {tijd:'Avond', titel:'Tafel in Blue Moon reserveren', tekst:'Voor de voorlaatste of laatste avond — tijdig vragen bij de receptie.', link:''}
+  ],
+  dag10: [
+    {tijd:'Hele dag', titel:'Geen auto, geen uitstap', tekst:'Laatste volledige dag — uitslapen, ontbijt zonder haast, zwembad, siësta, laatste aperitief.', link:''}
   ],
   dag11: [
     {tijd:'Ochtend', titel:'Uitchecken & luchthaven', tekst:'Vlucht SN3788 vertrekt om 18:15. Uitchecken voor 12u — vraag late check-out of bagageopslag. Tank voltanken bij luchthaven.', link:'https://maps.google.com/?saddr=H10+Rubicon+Horizons+Collection+Playa+Blanca&daddr=Lanzarote+Airport+ACE'}
@@ -1031,6 +1127,56 @@ window.editHotel = function(){
   const kenmerken = prompt('Kenmerken (sterren, faciliteiten):', h.kenmerken); if(kenmerken===null) return;
   const mapsQuery = prompt('Zoekterm voor Maps:', h.mapsQuery); if(mapsQuery===null) return;
   veldOpslaanNu('hotel', {naam,adres,kenmerken,mapsQuery}).then(renderHotel);
+};
+
+/* ---- Hotelboeking (bevestiging) ---- */
+function renderHotelboeking(){
+  const b = guideData.hotelboeking || DEFAULT_HOTELBOEKING;
+  const el = document.getElementById('hotelboeking-detail');
+  if(el) el.innerHTML = `
+    <div class="hotel-rij"><span class="i">🔖</span><span>Boekingsnr. ${b.boekingsnr}</span></div>
+    <div class="hotel-rij"><span class="i">📅</span><span>Check-in ${b.checkin} · check-out ${b.checkout}</span></div>
+    <div class="hotel-rij"><span class="i">🛏️</span><span>${b.kamer} — ${b.nachten}</span></div>
+    <div class="hotel-rij"><span class="i">💶</span><span>${b.prijs}</span></div>
+    <div class="hotel-rij"><span class="i">✅</span><span><strong>${b.totaal}</strong> · ${b.betaalwijze}</span></div>
+    <div class="hotel-rij"><span class="i">ℹ️</span><span>${b.extra}</span></div>`;
+}
+window.editHotelboeking = function(){
+  const b = guideData.hotelboeking || DEFAULT_HOTELBOEKING;
+  const boekingsnr = prompt('Boekingsnummer:', b.boekingsnr); if(boekingsnr===null) return;
+  const checkin = prompt('Check-in:', b.checkin); if(checkin===null) return;
+  const checkout = prompt('Check-out:', b.checkout); if(checkout===null) return;
+  const kamer = prompt('Kamertype:', b.kamer); if(kamer===null) return;
+  const nachten = prompt('Aantal nachten / personen:', b.nachten); if(nachten===null) return;
+  const prijs = prompt('Prijsdetail (vóór korting, kortingen):', b.prijs); if(prijs===null) return;
+  const totaal = prompt('Totaalbedrag:', b.totaal); if(totaal===null) return;
+  const betaalwijze = prompt('Betaalwijze:', b.betaalwijze); if(betaalwijze===null) return;
+  const extra = prompt('Extra info (klantenkaart, telefoon,...):', b.extra); if(extra===null) return;
+  veldOpslaanNu('hotelboeking', {boekingsnr,checkin,checkout,kamer,nachten,prijs,totaal,betaalwijze,extra}).then(renderHotelboeking);
+};
+
+/* ---- Huurwagen (bevestiging) ---- */
+function renderHuurwagen(){
+  const a = guideData.huurwagen || DEFAULT_HUURWAGEN;
+  const el = document.getElementById('huurwagen-detail');
+  if(el) el.innerHTML = `
+    <div class="hotel-rij"><span class="i">🏢</span><span>${a.maatschappij} — reservering ${a.reservering}</span></div>
+    <div class="hotel-rij"><span class="i">🚙</span><span>${a.voertuig}</span></div>
+    <div class="hotel-rij"><span class="i">📍</span><span>Ophalen: ${a.ophalen}</span></div>
+    <div class="hotel-rij"><span class="i">📍</span><span>Terugbrengen: ${a.terugbrengen}</span></div>
+    <div class="hotel-rij"><span class="i">💶</span><span><strong>${a.prijs}</strong></span></div>
+    <div class="hotel-rij"><span class="i">ℹ️</span><span>${a.extra}</span></div>`;
+}
+window.editHuurwagen = function(){
+  const a = guideData.huurwagen || DEFAULT_HUURWAGEN;
+  const maatschappij = prompt('Verhuurder:', a.maatschappij); if(maatschappij===null) return;
+  const reservering = prompt('Reserveringsnummer:', a.reservering); if(reservering===null) return;
+  const voertuig = prompt('Voertuigtype:', a.voertuig); if(voertuig===null) return;
+  const ophalen = prompt('Ophalen (plaats, datum, uur):', a.ophalen); if(ophalen===null) return;
+  const terugbrengen = prompt('Terugbrengen (plaats, datum, uur):', a.terugbrengen); if(terugbrengen===null) return;
+  const prijs = prompt('Prijs:', a.prijs); if(prijs===null) return;
+  const extra = prompt('Extra info (verzekering, mee te nemen documenten,...):', a.extra); if(extra===null) return;
+  veldOpslaanNu('huurwagen', {maatschappij,reservering,voertuig,ophalen,terugbrengen,prijs,extra}).then(renderHuurwagen);
 };
 
 /* ---- Dagactiviteiten ---- */
@@ -1086,10 +1232,10 @@ const DAGEN = [
   { id:'dag4',  titel:'Dag 4 — Playa Papagayo',          datum:'Dinsdag 5 januari' },
   { id:'dag5',  titel:'Dag 5 — El Golfo & westkust',     datum:'Woensdag 6 januari' },
   { id:'dag6',  titel:'Dag 6 — Timanfaya & La Geria',    datum:'Donderdag 7 januari' },
-  { id:'dag7',  titel:'Dag 7 — Mirador del Río & Jameos',datum:'Vrijdag 8 januari' },
+  { id:'dag7',  titel:'Dag 7 — Mirador del Río',         datum:'Vrijdag 8 januari' },
   { id:'dag8',  titel:'Dag 8 — Arrecife',                datum:'Zaterdag 9 januari' },
-  { id:'dag9',  titel:'Dag 9 — Vrije dag',               datum:'Zondag 10 januari' },
-  { id:'dag10', titel:'Dag 10 — Vrije dag',              datum:'Maandag 11 januari' },
+  { id:'dag9',  titel:'Dag 9 — Jameos del Agua',         datum:'Zondag 10 januari' },
+  { id:'dag10', titel:'Dag 10 — Volledig vrije dag',     datum:'Maandag 11 januari' },
   { id:'dag11', titel:'Dag 11 — Vertrek',                datum:'Dinsdag 12 januari' },
 ];
 
@@ -1151,7 +1297,58 @@ function verwijderBevestiging(i){
   renderBevestigingen();
 }
 
+/* ---- Paklijst ---- */
+function getPaklijst(){
+  if(!guideData.paklijst) guideData.paklijst = DEFAULT_PAKLIJST.map(x => ({...x}));
+  return guideData.paklijst;
+}
+function bewaarPaklijst(){
+  setDoc(guideDocRef, { paklijst: guideData.paklijst }, { merge: true }).catch(e => console.error('opslaan mislukt', e));
+}
+function renderPaklijst(){
+  const lijst = getPaklijst();
+  const el = document.getElementById('pak-lijst');
+  if(!el) return;
+  el.innerHTML = lijst.map((p,i) => `
+    <div class="pak-item ${p.klaar?'klaar':''}">
+      <input type="checkbox" ${p.klaar?'checked':''} onchange="togglePakItem(${i})">
+      <div class="pak-tekst">${escapeHtml(p.tekst)}</div>
+      <span class="del-i" onclick="delPakItem(${i})">verwijder</span>
+    </div>`).join('') || '<div class="verslag-leeg">Nog geen items toegevoegd.</div>';
+  const klaar = lijst.filter(p => p.klaar).length;
+  const teller = document.getElementById('pak-teller');
+  if(teller) teller.textContent = klaar + ' / ' + lijst.length + ' klaar';
+  const lbl = document.getElementById('pak-progress-lbl');
+  const pct = lijst.length ? Math.round(100*klaar/lijst.length) : 0;
+  if(lbl) lbl.textContent = pct + '% ingepakt';
+  const fill = document.getElementById('pak-bar-fill');
+  if(fill) fill.style.width = pct + '%';
+}
+window.togglePakItem = function(i){
+  const lijst = getPaklijst();
+  lijst[i].klaar = !lijst[i].klaar;
+  bewaarPaklijst();
+  renderPaklijst();
+};
+window.delPakItem = function(i){
+  const lijst = getPaklijst();
+  lijst.splice(i,1);
+  bewaarPaklijst();
+  renderPaklijst();
+};
+window.voegPakItemToe = function(){
+  const inp = document.getElementById('pak-nieuw');
+  const tekst = inp.value.trim();
+  if(!tekst) return;
+  const lijst = getPaklijst();
+  lijst.push({tekst, klaar:false});
+  bewaarPaklijst();
+  inp.value = '';
+  renderPaklijst();
+};
+
 const BUDGET_IDS = ['b-vluchten','b-hotel','b-auto','b-uitstap','b-eten','b-shop','b-div'];
+const DEFAULT_BUDGET = { 'b-hotel':'3257.50', 'b-auto':'191.34' };
 
 onSnapshot(guideDocRef, (snap) => {
   guideData = snap.exists() ? snap.data() : {};
@@ -1161,12 +1358,17 @@ onSnapshot(guideDocRef, (snap) => {
   });
   BUDGET_IDS.forEach(id => {
     const el = document.getElementById(id);
-    if(el && guideData[id] !== undefined) el.value = guideData[id];
+    if(!el) return;
+    if(guideData[id] !== undefined) el.value = guideData[id];
+    else if(DEFAULT_BUDGET[id] !== undefined) el.value = DEFAULT_BUDGET[id];
   });
   renderBevestigingen();
   renderVluchten();
   renderHotel();
-  ['dag1','dag2','dag3','dag4','dag5','dag6','dag7','dag8','dag9','dag11'].forEach(renderActiviteiten);
+  renderHotelboeking();
+  renderHuurwagen();
+  renderPaklijst();
+  ['dag1','dag2','dag3','dag4','dag5','dag6','dag7','dag8','dag9','dag10','dag11'].forEach(renderActiviteiten);
   herbereken();
 }, (err) => console.error('sync error', err));
 
